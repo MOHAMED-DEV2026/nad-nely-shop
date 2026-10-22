@@ -97,4 +97,52 @@ router.post(
   }
 );
 
+// RG34 : pour un retrait, « expédiée » s'affiche « Prête à retirer » et « livrée » s'affiche « Retirée »
+const LIBELLES = {
+  en_attente: 'En attente', confirmee: 'Confirmée', expediee: 'Expédiée', livree: 'Livrée', annulee: 'Annulée',
+};
+function statutAffiche(commande) {
+  if (commande.mode_reception === 'retrait') {
+    if (commande.statut_commande === 'expediee') return 'Prête à retirer';
+    if (commande.statut_commande === 'livree') return 'Retirée';
+  }
+  return LIBELLES[commande.statut_commande];
+}
+
+// GET /api/commandes : mes commandes, de la plus récente à la plus ancienne
+router.get('/', exigerConnexion, async (req, res, next) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT id_commande, date_commande, mode_reception, montant_total, statut_commande
+       FROM COMMANDE WHERE id_utilisateur = ? ORDER BY date_commande DESC, id_commande DESC`,
+      [req.user.id]
+    );
+    res.json(rows.map((c) => ({ ...c, statut_affiche: statutAffiche(c) })));
+  } catch (e) { next(e); }
+});
+
+// GET /api/commandes/:id : détail d'une de mes commandes
+router.get('/:id', exigerConnexion, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    // On filtre aussi sur l'utilisateur : impossible de voir la commande d'un autre client
+    const [rows] = await db.query(
+      'SELECT * FROM COMMANDE WHERE id_commande = ? AND id_utilisateur = ?', [id, req.user.id]
+    );
+    if (rows.length === 0) return res.status(404).json({ message: 'Commande introuvable' });
+
+    const [lignes] = await db.query(
+      `SELECT l.id_produit, p.nom_produit, l.quantite, l.prix_unitaire,
+              (l.quantite * l.prix_unitaire) AS sous_total
+       FROM LIGNE_COMMANDE l JOIN PRODUIT p ON p.id_produit = l.id_produit
+       WHERE l.id_commande = ?`,
+      [id]
+    );
+    const [paiements] = await db.query(
+      'SELECT statut_paiement, date_paiement FROM PAIEMENT WHERE id_commande = ?', [id]
+    );
+    res.json({ ...rows[0], statut_affiche: statutAffiche(rows[0]), lignes, paiement: paiements[0] || null });
+  } catch (e) { next(e); }
+});
+
 module.exports = router;

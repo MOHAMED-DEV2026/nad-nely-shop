@@ -32,4 +32,8 @@ app.use((err, req, res, next) => {
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`API NAD-NELY Shop sur http://localhost:${port}`));
+const serveur = app.listen(port, () => console.log(`API NAD-NELY Shop sur http://localhost:${port}`));
+serveur.on('error', (erreur) => {
+  console.error('Impossible de démarrer le serveur :', erreur);
+  process.exit(1);
+});
