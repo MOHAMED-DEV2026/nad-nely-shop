@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "creer-admin": "node scripts/creer-admin.js"
+    "creer-admin": "node scripts/creerAdmin.js"
   },
   "license": "ISC",
   "dependencies": {

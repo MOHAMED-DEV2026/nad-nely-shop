@@ -7,18 +7,19 @@ const COMMUNES = ['Acoua', 'Bandraboua', 'Bandrélé', 'Bouéni', 'Chiconi', 'Ch
   'Dzaoudzi', 'Kani-Kéli', 'Koungou', 'Mamoudzou', 'Mtsamboro', "M'Tsangamouji", 'Ouangani',
   'Pamandzi', 'Sada', 'Tsingoni'];
 
-// POST /api/commandes : crée une commande « en attente » avec son paiement « en attente ».
+// POST /api/commandes : crée une commande « en attente » avec son paiement « en attente » (BF17)
 // Corps attendu :
-// { "mode_reception": "livraison" | "retrait", "adresse": "...", "commune": "...",
-//   "lignes": [ { "id_produit": 1, "quantite": 2 } ] }
-// Le prix et le total viennent toujours de la base, jamais du navigateur.
+// { "lignes": [ { "id_produit": 3, "quantite": 1 } ], "mode_reception": "livraison" | "retrait",
+//   "adresse_livraison": "...", "commune_livraison": "...", "telephone_contact": "..." }
+// RG19 : le prix et le total viennent toujours de la base, jamais du navigateur.
 router.post(
   '/',
   exigerConnexion,
   [
     body('mode_reception').isIn(['livraison', 'retrait']).withMessage('Mode de réception invalide'),
-    body('adresse').if(body('mode_reception').equals('livraison')).trim().notEmpty().withMessage('Adresse obligatoire').isLength({ max: 255 }),
-    body('commune').if(body('mode_reception').equals('livraison')).isIn(COMMUNES).withMessage('Commune invalide'),
+    body('adresse_livraison').if(body('mode_reception').equals('livraison')).trim().notEmpty().withMessage('Adresse obligatoire').isLength({ max: 255 }),
+    body('commune_livraison').if(body('mode_reception').equals('livraison')).isIn(COMMUNES).withMessage('Commune invalide'),
+    body('telephone_contact').trim().matches(/^[0-9+ .()-]{6,20}$/).withMessage('Téléphone de contact invalide'),
     body('lignes').isArray({ min: 1 }).withMessage('Le panier est vide'),
     body('lignes.*.id_produit').isInt({ min: 1 }),
     body('lignes.*.quantite').isInt({ min: 1, max: 99 }),
@@ -27,7 +28,7 @@ router.post(
     const erreurs = validationResult(req);
     if (!erreurs.isEmpty()) return res.status(400).json({ erreurs: erreurs.array() });
 
-    const { mode_reception, adresse, commune, lignes } = req.body;
+    const { mode_reception, adresse_livraison, commune_livraison, telephone_contact, lignes } = req.body;
 
     // Si le même produit apparaît deux fois, on additionne les quantités
     const quantites = new Map();
@@ -43,48 +44,47 @@ router.post(
       const ids = [...quantites.keys()];
       // FOR UPDATE : verrouille les produits le temps de la vérification
       const [produits] = await connexion.query(
-        `SELECT id_produit, nom_produit, prix, stock, actif, date_expiration
-         FROM PRODUIT WHERE id_produit IN (?) FOR UPDATE`,
+        `SELECT id_produit, nom, prix, stock, actif,
+                (date_expiration IS NOT NULL AND date_expiration < CURDATE()) AS expire
+         FROM produit WHERE id_produit IN (?) FOR UPDATE`,
         [ids]
       );
       const parId = new Map(produits.map((p) => [p.id_produit, p]));
-      const aujourdhui = new Date().toISOString().slice(0, 10);
 
       let total = 0;
       for (const [id, quantite] of quantites) {
         const p = parId.get(id);
-        const expire = p && p.date_expiration && String(p.date_expiration.toISOString?.().slice(0, 10) ?? p.date_expiration) < aujourdhui;
-        // RG15 : vendable = actif, stock > 0, non expiré. RG17 : stock suffisant.
-        if (!p || !p.actif || expire) {
+        // RG15 : vendable = actif, non expiré. RG17 : stock suffisant.
+        if (!p || !p.actif || p.expire) {
           await connexion.rollback();
-          return res.status(409).json({ message: `Produit indisponible : ${p ? p.nom_produit : 'produit inconnu'}` });
+          return res.status(409).json({ message: `Produit indisponible : ${p ? p.nom : 'produit inconnu'}` });
         }
         if (p.stock < quantite) {
           await connexion.rollback();
-          return res.status(409).json({ message: `Stock insuffisant pour : ${p.nom_produit}` });
+          return res.status(409).json({ message: `Stock insuffisant pour : ${p.nom}` });
         }
         total += Number(p.prix) * quantite;
       }
       total = Math.round(total * 100) / 100;
 
+      const livraison = mode_reception === 'livraison';
       const [c] = await connexion.query(
-        `INSERT INTO COMMANDE (id_utilisateur, mode_reception, adresse_livraison, commune_livraison, montant_total)
-         VALUES (?, ?, ?, ?, ?)`,
-        [req.user.id, mode_reception,
-         mode_reception === 'livraison' ? adresse : null,
-         mode_reception === 'livraison' ? commune : null,
-         total]
+        `INSERT INTO commande (id_utilisateur, mode_reception, adresse_livraison, commune_livraison,
+                               telephone_contact, montant_total)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [req.user.id, mode_reception, livraison ? adresse_livraison : null,
+         livraison ? commune_livraison : null, telephone_contact, total]
       );
       const idCommande = c.insertId;
 
       for (const [id, quantite] of quantites) {
         // Le prix est figé au moment de l'achat
         await connexion.query(
-          'INSERT INTO LIGNE_COMMANDE (id_commande, id_produit, quantite, prix_unitaire) VALUES (?, ?, ?, ?)',
+          'INSERT INTO ligne_commande (id_commande, id_produit, quantite, prix_unitaire) VALUES (?, ?, ?, ?)',
           [idCommande, id, quantite, parId.get(id).prix]
         );
       }
-      await connexion.query('INSERT INTO PAIEMENT (id_commande, montant) VALUES (?, ?)', [idCommande, total]);
+      await connexion.query('INSERT INTO paiement (id_commande, montant) VALUES (?, ?)', [idCommande, total]);
 
       await connexion.commit();
       res.status(201).json({ id_commande: idCommande, montant_total: total, statut: 'en_attente' });
@@ -103,43 +103,42 @@ const LIBELLES = {
 };
 function statutAffiche(commande) {
   if (commande.mode_reception === 'retrait') {
-    if (commande.statut_commande === 'expediee') return 'Prête à retirer';
-    if (commande.statut_commande === 'livree') return 'Retirée';
+    if (commande.statut === 'expediee') return 'Prête à retirer';
+    if (commande.statut === 'livree') return 'Retirée';
   }
-  return LIBELLES[commande.statut_commande];
+  return LIBELLES[commande.statut];
 }
 
-// GET /api/commandes : mes commandes, de la plus récente à la plus ancienne
+// GET /api/commandes : mes commandes, de la plus récente à la plus ancienne (BF19)
 router.get('/', exigerConnexion, async (req, res, next) => {
   try {
     const [rows] = await db.query(
-      `SELECT id_commande, date_commande, mode_reception, montant_total, statut_commande
-       FROM COMMANDE WHERE id_utilisateur = ? ORDER BY date_commande DESC, id_commande DESC`,
+      `SELECT id_commande, date_commande, mode_reception, montant_total, statut
+       FROM commande WHERE id_utilisateur = ? ORDER BY date_commande DESC, id_commande DESC`,
       [req.user.id]
     );
     res.json(rows.map((c) => ({ ...c, statut_affiche: statutAffiche(c) })));
   } catch (e) { next(e); }
 });
 
-// GET /api/commandes/:id : détail d'une de mes commandes
+// GET /api/commandes/:id : détail d'une de mes commandes (BF20)
 router.get('/:id', exigerConnexion, async (req, res, next) => {
   try {
     const id = Number(req.params.id);
-    // On filtre aussi sur l'utilisateur : impossible de voir la commande d'un autre client
-    const [rows] = await db.query(
-      'SELECT * FROM COMMANDE WHERE id_commande = ? AND id_utilisateur = ?', [id, req.user.id]
-    );
+    const [rows] = await db.query('SELECT * FROM commande WHERE id_commande = ?', [id]);
     if (rows.length === 0) return res.status(404).json({ message: 'Commande introuvable' });
+    // La commande doit appartenir au client connecté, sinon 403
+    if (rows[0].id_utilisateur !== req.user.id) return res.status(403).json({ message: 'Accès refusé' });
 
     const [lignes] = await db.query(
-      `SELECT l.id_produit, p.nom_produit, l.quantite, l.prix_unitaire,
+      `SELECT l.id_produit, p.nom, l.quantite, l.prix_unitaire,
               (l.quantite * l.prix_unitaire) AS sous_total
-       FROM LIGNE_COMMANDE l JOIN PRODUIT p ON p.id_produit = l.id_produit
+       FROM ligne_commande l JOIN produit p ON p.id_produit = l.id_produit
        WHERE l.id_commande = ?`,
       [id]
     );
     const [paiements] = await db.query(
-      'SELECT statut_paiement, date_paiement FROM PAIEMENT WHERE id_commande = ?', [id]
+      'SELECT statut, date_paiement FROM paiement WHERE id_commande = ?', [id]
     );
     res.json({ ...rows[0], statut_affiche: statutAffiche(rows[0]), lignes, paiement: paiements[0] || null });
   } catch (e) { next(e); }

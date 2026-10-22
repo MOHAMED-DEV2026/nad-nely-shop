@@ -19,6 +19,7 @@ app.use('/api/commandes', require('./routes/commandes'));
 app.use('/api/admin/produits', require('./routes/admin-produits'));
 app.use('/api/admin/categories', require('./routes/admin-categories'));
 app.use('/api/admin/commandes', require('./routes/admin-commandes'));
+app.use('/api/admin/tableau-de-bord', require('./routes/admin-tableau-de-bord'));
 
 // Images des produits (fichiers du dossier uploads)
 app.use('/uploads', express.static(require('path').join(__dirname, '..', 'uploads')));
