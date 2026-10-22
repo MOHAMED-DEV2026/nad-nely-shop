@@ -18,6 +18,7 @@ app.use('/api/produits', require('./routes/produits'));
 app.use('/api/commandes', require('./routes/commandes'));
 app.use('/api/admin/produits', require('./routes/admin-produits'));
 app.use('/api/admin/categories', require('./routes/admin-categories'));
+app.use('/api/admin/commandes', require('./routes/admin-commandes'));
 
 // Images des produits (fichiers du dossier uploads)
 app.use('/uploads', express.static(require('path').join(__dirname, '..', 'uploads')));
@@ -32,8 +33,11 @@ app.use((err, req, res, next) => {
 });
 
 const port = process.env.PORT || 3000;
-const serveur = app.listen(port, () => console.log(`API NAD-NELY Shop sur http://localhost:${port}`));
-serveur.on('error', (erreur) => {
-  console.error('Impossible de démarrer le serveur :', erreur);
-  process.exit(1);
+app.listen(port, (erreur) => {
+  // Express 5 transmet l'erreur de démarrage (par exemple port déjà utilisé) à cette fonction
+  if (erreur) {
+    console.error('Impossible de démarrer le serveur :', erreur.message);
+    process.exit(1);
+  }
+  console.log(`API NAD-NELY Shop sur http://localhost:${port}`);
 });
