@@ -1,8 +1,10 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const { body, validationResult } = require('express-validator');
 const db = require('../config/db');
+const { envoyerCodeReinitialisation } = require('../config/mailer');
 
 // RG02 : 8 caractères minimum, dont une majuscule, une minuscule et un chiffre
 const POLITIQUE_MDP = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
@@ -76,4 +78,79 @@ router.post(
   }
 );
 
+// POST /api/auth/mot-de-passe-oublie : génère un code à 6 chiffres et l'envoie par e-mail (BF04, RG05)
+router.post(
+  '/mot-de-passe-oublie',
+  [body('email').trim().isEmail().withMessage('Adresse e-mail invalide')],
+  async (req, res, next) => {
+    const erreurs = validationResult(req);
+    if (!erreurs.isEmpty()) return res.status(400).json({ erreurs: erreurs.array() });
+
+    // Même réponse que le compte existe ou non : on ne révèle pas les adresses inscrites
+    const reponse = { message: 'Si cette adresse correspond à un compte, un code vient d’être envoyé par e-mail.' };
+
+    try {
+      const { email } = req.body;
+      const [rows] = await db.query('SELECT id_utilisateur, prenom FROM utilisateur WHERE email = ?', [email]);
+      if (rows.length === 0) return res.json(reponse);
+
+      // Code à 6 chiffres, stocké haché, valable 15 minutes (RG05)
+      const code = String(crypto.randomInt(0, 1000000)).padStart(6, '0');
+      const hash = await bcrypt.hash(code, 10);
+      await db.query(
+        'UPDATE utilisateur SET code_reinitialisation = ?, expiration_code = DATE_ADD(NOW(), INTERVAL 15 MINUTE) WHERE id_utilisateur = ?',
+        [hash, rows[0].id_utilisateur]
+      );
+
+      try {
+        await envoyerCodeReinitialisation(email, rows[0].prenom, code);
+      } catch (erreurMail) {
+        console.error('Envoi du code impossible :', erreurMail.message);
+      }
+      res.json(reponse);
+    } catch (e) { next(e); }
+  }
+);
+
+// POST /api/auth/reinitialiser-mot-de-passe : vérifie le code puis enregistre le nouveau mot de passe (BF04, RG05, RG02, RG03)
+router.post(
+  '/reinitialiser-mot-de-passe',
+  [
+    body('email').trim().isEmail().withMessage('Adresse e-mail invalide'),
+    body('code').trim().matches(/^\d{6}$/).withMessage('Le code doit contenir 6 chiffres'),
+    body('nouveau_mot_de_passe').matches(POLITIQUE_MDP)
+      .withMessage('Le mot de passe doit contenir au moins 8 caractères, dont une majuscule, une minuscule et un chiffre'),
+    body('confirmation').custom((valeur, { req }) => valeur === req.body.nouveau_mot_de_passe)
+      .withMessage('La confirmation est différente du mot de passe'),
+  ],
+  async (req, res, next) => {
+    const erreurs = validationResult(req);
+    if (!erreurs.isEmpty()) return res.status(400).json({ erreurs: erreurs.array() });
+
+    try {
+      const { email, code, nouveau_mot_de_passe } = req.body;
+      const [rows] = await db.query(
+        'SELECT id_utilisateur, code_reinitialisation, expiration_code FROM utilisateur WHERE email = ?',
+        [email]
+      );
+      const user = rows[0];
+      const messageErreur = { message: 'Code invalide ou expiré' };
+
+      // Même message dans tous les cas d'échec (e-mail inconnu, code faux, code expiré)
+      if (!user || !user.code_reinitialisation || !user.expiration_code) return res.status(400).json(messageErreur);
+      const [[{ valide }]] = await db.query('SELECT (? > NOW()) AS valide', [user.expiration_code]);
+      if (!valide) return res.status(400).json(messageErreur);
+      const ok = await bcrypt.compare(code, user.code_reinitialisation);
+      if (!ok) return res.status(400).json(messageErreur);
+
+      // Le code ne sert qu'une fois (RG05) : on l'efface en même temps que le mot de passe est changé (RG03)
+      const hash = await bcrypt.hash(nouveau_mot_de_passe, 10);
+      await db.query(
+        'UPDATE utilisateur SET mot_de_passe = ?, code_reinitialisation = NULL, expiration_code = NULL WHERE id_utilisateur = ?',
+        [hash, user.id_utilisateur]
+      );
+      res.json({ message: 'Mot de passe réinitialisé. Vous pouvez vous connecter.' });
+    } catch (e) { next(e); }
+  }
+);
 module.exports = router;
