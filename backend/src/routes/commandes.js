@@ -2,6 +2,7 @@ const router = require('express').Router();
 const { body, validationResult } = require('express-validator');
 const db = require('../config/db');
 const { exigerConnexion } = require('../middleware/auth');
+const { creerSessionPaiement } = require('../config/stripe');
 
 const COMMUNES = ['Acoua', 'Bandraboua', 'Bandrélé', 'Bouéni', 'Chiconi', 'Chirongui', 'Dembéni',
   'Dzaoudzi', 'Kani-Kéli', 'Koungou', 'Mamoudzou', 'Mtsamboro', "M'Tsangamouji", 'Ouangani',
@@ -86,8 +87,17 @@ router.post(
       }
       await connexion.query('INSERT INTO paiement (id_commande, montant) VALUES (?, ?)', [idCommande, total]);
 
-      await connexion.commit();
-      res.status(201).json({ id_commande: idCommande, montant_total: total, statut: 'en_attente' });
+           await connexion.commit();
+
+      // Page de paiement Stripe. Si Stripe est injoignable, la commande reste « en attente »
+      // et pourra être payée plus tard (RG41).
+      let urlPaiement = null;
+      try {
+        urlPaiement = await creerSessionPaiement(idCommande, total);
+      } catch (erreurStripe) {
+        console.error('Session Stripe impossible :', erreurStripe.message);
+      }
+      res.status(201).json({ id_commande: idCommande, montant_total: total, statut: 'en_attente', url_paiement: urlPaiement });
     } catch (e) {
       await connexion.rollback();
       next(e);
@@ -141,6 +151,21 @@ router.get('/:id', exigerConnexion, async (req, res, next) => {
       'SELECT statut, date_paiement FROM paiement WHERE id_commande = ?', [id]
     );
     res.json({ ...rows[0], statut_affiche: statutAffiche(rows[0]), lignes, paiement: paiements[0] || null });
+  } catch (e) { next(e); }
+});
+
+// POST /api/commandes/:id/paiement : relance le paiement d'une commande « en attente » (BF20, RG41)
+router.post('/:id/paiement', exigerConnexion, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    const [rows] = await db.query('SELECT id_utilisateur, montant_total, statut FROM commande WHERE id_commande = ?', [id]);
+    if (rows.length === 0) return res.status(404).json({ message: 'Commande introuvable' });
+    if (rows[0].id_utilisateur !== req.user.id) return res.status(403).json({ message: 'Accès refusé' });
+    if (rows[0].statut !== 'en_attente') {
+      return res.status(409).json({ message: 'Cette commande n’est plus en attente de paiement' });
+    }
+    const urlPaiement = await creerSessionPaiement(id, rows[0].montant_total);
+    res.json({ id_commande: id, url_paiement: urlPaiement });
   } catch (e) { next(e); }
 });
 
