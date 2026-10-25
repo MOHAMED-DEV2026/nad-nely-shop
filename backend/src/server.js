@@ -20,6 +20,7 @@ app.use('/api/admin/produits', require('./routes/admin-produits'));
 app.use('/api/admin/categories', require('./routes/admin-categories'));
 app.use('/api/admin/commandes', require('./routes/admin-commandes'));
 app.use('/api/admin/tableau-de-bord', require('./routes/admin-tableau-de-bord'));
+app.use('/api/admin/utilisateurs', require('./routes/admin-utilisateurs'));
 app.use('/api/compte', require('./routes/compte'));
 
 // Images des produits (fichiers du dossier uploads)
