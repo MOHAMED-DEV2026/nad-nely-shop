@@ -19,3 +19,8 @@ export async function appelerApi(chemin, options = {}) {
   }
   return donnees
 }
+
+// Adresse complete de l image d un produit (fichier range par l API)
+export function urlImage(nomFichier) {
+  return URL_API.replace(/\/api$/, "") + "/uploads/" + nomFichier
+}
