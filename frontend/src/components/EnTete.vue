@@ -1,14 +1,24 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import logo from '../assets/logo.png'
+import { ref, onMounted } from "vue"
+import { useRouter } from "vue-router"
+import logo from "../assets/logo.png"
+import { appelerApi } from "../services/api"
 
 const router = useRouter()
-const recherche = ref('')
+const recherche = ref("")
+const categories = ref([])
 
 function chercher() {
-  router.push({ path: '/catalogue', query: recherche.value ? { recherche: recherche.value } : {} })
+  router.push({ path: "/catalogue", query: recherche.value ? { recherche: recherche.value } : {} })
 }
+
+onMounted(async () => {
+  try {
+    categories.value = await appelerApi("/categories")
+  } catch {
+    categories.value = []
+  }
+})
 </script>
 
 <template>
@@ -30,6 +40,11 @@ function chercher() {
           <RouterLink to="/panier" class="bouton bouton-or">Panier</RouterLink>
         </div>
       </div>
+      <nav class="categories" aria-label="Catégories">
+        <div class="categories-contenu">
+          <RouterLink v-for="c in categories" :key="c.id_categorie" :to="{ path: '/catalogue', query: { categorie: c.id_categorie } }">{{ c.nom }}</RouterLink>
+        </div>
+      </nav>
     </header>
   </div>
 </template>
@@ -46,4 +61,8 @@ function chercher() {
 .recherche button { min-height: var(--hauteur-bouton); padding: 0 20px; background: var(--marine); color: var(--blanc); border: 0; border-radius: 0 8px 8px 0; font-weight: 500; }
 .actions { display: flex; gap: 12px; }
 .cache { position: absolute; left: -9999px; }
+.categories { border-top: 1px solid var(--bordure); }
+.categories-contenu { max-width: var(--largeur-max); margin: 0 auto; padding: 0 24px; display: flex; flex-wrap: wrap; gap: 0 32px; }
+.categories a { min-height: var(--hauteur-bouton); display: flex; align-items: center; font-size: 15px; font-weight: 500; color: var(--marine); }
+.categories a:hover { text-decoration: underline; }
 </style>
