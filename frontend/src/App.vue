@@ -1,9 +1,11 @@
 <script setup>
+import EnTete from './components/EnTete.vue'
 import PiedDePage from './components/PiedDePage.vue'
 </script>
 
 <template>
   <div class="appli">
+    <EnTete />
     <div class="contenu"><RouterView /></div>
     <PiedDePage />
   </div>
