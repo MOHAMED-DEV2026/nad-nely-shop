@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const db = require('../config/db');
 
-const PAR_PAGE = 12;
+const PAR_PAGE = 6;
 
 // Le tri est choisi dans une liste fixe, jamais recopié depuis la requête (évite l'injection SQL)
 const TRIS = {
@@ -74,3 +74,6 @@ router.get('/:id', async (req, res, next) => {
 });
 
 module.exports = router;
+
+
+

@@ -4,11 +4,13 @@ import { useRoute, useRouter } from "vue-router"
 import { appelerApi } from "../../services/api"
 import CarteProduit from "../../components/CarteProduit.vue"
 import FiltresCatalogue from "../../components/FiltresCatalogue.vue"
+import Pagination from "../../components/Pagination.vue"
 
 const route = useRoute()
 const router = useRouter()
 const produits = ref([])
 const total = ref(0)
+const parPage = ref(12)
 const chargement = ref(true)
 const erreur = ref("")
 const tri = ref(route.query.tri || "nouveautes")
@@ -22,6 +24,7 @@ async function charger() {
     const donnees = await appelerApi("/produits" + (parametres ? "?" + parametres : ""))
     produits.value = donnees.produits
     total.value = donnees.total
+    parPage.value = donnees.par_page
   } catch (e) {
     erreur.value = "Impossible de charger les produits. Réessayez plus tard."
   } finally {
@@ -65,6 +68,7 @@ watch(() => route.query.tri, (valeur) => { tri.value = valeur || "nouveautes" })
           <div class="grille">
             <CarteProduit v-for="p in produits" :key="p.id_produit" :produit="p" />
           </div>
+          <Pagination :total="total" :par-page="parPage" />
         </template>
       </section>
     </div>
@@ -86,4 +90,5 @@ watch(() => route.query.tri, (valeur) => { tri.value = valeur || "nouveautes" })
 .grille { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 16px; }
 @media (min-width: 768px) { .grille { grid-template-columns: repeat(3, 1fr); } }
 </style>
+
 
