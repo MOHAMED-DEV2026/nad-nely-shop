@@ -1,0 +1,9 @@
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--creme); color: var(--texte); font-family: var(--police-texte); font-size: 16px; line-height: 1.5; }
+h1, h2, h3 { font-family: var(--police-titre); color: var(--marine); }
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font-family: var(--police-texte); }
+button { cursor: pointer; }
+.bouton { min-height: var(--hauteur-bouton); padding: 0 24px; display: inline-flex; align-items: center; justify-content: center; border: 2px solid var(--marine); border-radius: var(--arrondi-petit); background: var(--marine); color: var(--blanc); font-weight: 500; }
+.bouton-contour { background: transparent; color: var(--marine); }
+.bouton-or { background: var(--or); border-color: var(--or); color: var(--marine); font-weight: 600; }

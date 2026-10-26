@@ -1,0 +1,41 @@
+:root {
+  /* Couleurs de la marque (prises des maquettes) */
+  --marine: #1B2A4A;
+  --or: #C9A44C;
+  --rose: #F3D6DC;
+  --creme: #FAF8F5;
+  --blanc: #FFFFFF;
+
+  /* Textes */
+  --texte: #222222;
+  --texte-doux: #444444;
+
+  /* Bordures et fonds doux */
+  --bordure: #E8E2D8;
+  --fond-beige: #E9E1CE;
+  --fond-bleu-clair: #DCE3F0;
+  --ligne-pied: #34456B;
+
+  /* Messages */
+  --erreur-fond: #F8D9D9;
+  --erreur-texte: #8E1B1B;
+  --alerte-fond: #FFE9CC;
+  --alerte-texte: #7A3E00;
+  --rouge: #C62828;
+
+  /* Polices */
+  --police-titre: 'Playfair Display', serif;
+  --police-texte: 'Poppins', sans-serif;
+
+  /* Arrondis */
+  --arrondi-petit: 8px;
+  --arrondi-moyen: 16px;
+  --arrondi-grand: 20px;
+
+  /* Hauteur minimale des boutons (facile à toucher sur mobile) */
+  --hauteur-bouton: 44px;
+  --hauteur-champ: 48px;
+
+  /* Largeur maximale du contenu */
+  --largeur-max: 1280px;
+}
