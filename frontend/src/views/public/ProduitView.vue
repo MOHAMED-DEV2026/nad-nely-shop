@@ -3,14 +3,20 @@ import { ref, computed, watch } from "vue"
 import { useRoute } from "vue-router"
 import { appelerApi, urlImage } from "../../services/api"
 import { formaterPrix } from "../../utils/format"
+import { panier } from "../../stores/panier"
+import SelecteurQuantite from "../../components/SelecteurQuantite.vue"
 
 const route = useRoute()
 const produit = ref(null)
 const chargement = ref(true)
 const erreur = ref("")
+const quantite = ref(1)
+const message = ref("")
 
 async function charger() {
   chargement.value = true
+  quantite.value = 1
+  message.value = ""
   erreur.value = ""
   try {
     produit.value = await appelerApi("/produits/" + route.params.id)
@@ -31,6 +37,11 @@ const etiquette = computed(() => {
 })
 
 const lienCategorie = computed(() => ({ path: "/catalogue", query: { categorie: produit.value ? produit.value.id_categorie : "" } }))
+
+function ajouter() {
+  panier.ajouter(produit.value, quantite.value)
+  message.value = "Produit ajouté au panier"
+}
 
 function formaterDate(date) {
   return date ? new Date(date).toLocaleDateString("fr-FR") : ""
@@ -64,7 +75,11 @@ watch(() => route.params.id, charger, { immediate: true })
             <template v-if="produit.date_fabrication"><dt>Fabriqué le</dt><dd>{{ formaterDate(produit.date_fabrication) }}</dd></template>
             <template v-if="produit.date_expiration"><dt>À utiliser avant le</dt><dd>{{ formaterDate(produit.date_expiration) }}</dd></template>
           </dl>
-          <button type="button" class="bouton ajout" :disabled="!produit.disponible">Ajouter au panier</button>
+          <div class="achat">
+            <SelecteurQuantite v-if="produit.disponible" v-model="quantite" :max="produit.stock" />
+            <button type="button" class="bouton ajout" :disabled="!produit.disponible" @click="ajouter">Ajouter au panier</button>
+          </div>
+          <p v-if="message" class="confirmation" role="status">{{ message }}</p>
         </div>
       </div>
     </template>
@@ -90,9 +105,12 @@ watch(() => route.params.id, charger, { immediate: true })
 .details { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 24px; background: var(--blanc); border: 1px solid var(--bordure); border-radius: 12px; padding: 16px; font-size: 14px; }
 .details dt { color: #555555; }
 .details dd { margin: 0; font-weight: 500; }
-.ajout { align-self: stretch; min-height: 52px; font-size: 16px; font-weight: 600; }
+.achat { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+.ajout { flex: 1 1 220px; min-height: 52px; font-size: 16px; font-weight: 600; }
+.confirmation { margin: 0; background: #DDF0DE; color: #1B5E20; border-radius: var(--arrondi-petit); padding: 12px 16px; font-size: 14px; font-weight: 500; }
 .ajout:disabled { background: #D9D9D9; border-color: #D9D9D9; color: #4A4A4A; cursor: not-allowed; }
 .info { color: var(--texte-doux); font-size: 14px; }
 .message-erreur { background: var(--erreur-fond); color: var(--erreur-texte); border-radius: var(--arrondi-petit); padding: 12px 16px; font-weight: 500; }
 .message-erreur a { text-decoration: underline; margin-left: 8px; }
 </style>
+

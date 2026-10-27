@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue"
 import { useRouter } from "vue-router"
 import logo from "../assets/logo.png"
 import { appelerApi } from "../services/api"
+import { nombreArticles } from "../stores/panier"
 
 const router = useRouter()
 const recherche = ref("")
@@ -37,7 +38,7 @@ onMounted(async () => {
         </form>
         <div class="actions">
           <RouterLink to="/connexion" class="bouton bouton-contour">Se connecter</RouterLink>
-          <RouterLink to="/panier" class="bouton bouton-or">Panier</RouterLink>
+          <RouterLink to="/panier" class="bouton bouton-or">Panier<span v-if="nombreArticles > 0" class="pastille">{{ nombreArticles }}</span></RouterLink>
         </div>
       </div>
       <nav class="categories" aria-label="Catégories">
@@ -60,9 +61,11 @@ onMounted(async () => {
 .recherche input { flex: 1; min-width: 0; min-height: var(--hauteur-bouton); border: 1px solid var(--marine); border-right: 0; border-radius: 8px 0 0 8px; padding: 0 16px; font-size: 15px; background: var(--creme); }
 .recherche button { min-height: var(--hauteur-bouton); padding: 0 20px; background: var(--marine); color: var(--blanc); border: 0; border-radius: 0 8px 8px 0; font-weight: 500; }
 .actions { display: flex; gap: 12px; }
+.pastille { background: var(--marine); color: var(--blanc); border-radius: 999px; min-width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; margin-left: 8px; }
 .cache { position: absolute; left: -9999px; }
 .categories { border-top: 1px solid var(--bordure); }
 .categories-contenu { max-width: var(--largeur-max); margin: 0 auto; padding: 0 24px; display: flex; flex-wrap: wrap; gap: 0 32px; }
 .categories a { min-height: var(--hauteur-bouton); display: flex; align-items: center; font-size: 15px; font-weight: 500; color: var(--marine); }
 .categories a:hover { text-decoration: underline; }
 </style>
+
