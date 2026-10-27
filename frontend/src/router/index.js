@@ -1,22 +1,38 @@
-import { createRouter, createWebHistory } from "vue-router"
-import AccueilView from "../views/public/AccueilView.vue"
-import CatalogueView from "../views/public/CatalogueView.vue"
-import ProduitView from "../views/public/ProduitView.vue"
-import PanierView from "../views/public/PanierView.vue"
-import ConnexionView from "../views/public/ConnexionView.vue"
-import InscriptionView from "../views/public/InscriptionView.vue"
+import { createRouter, createWebHistory } from "vue-router";
+import { estConnecte } from "../stores/auth.js";
+import AccueilView from "../views/public/AccueilView.vue";
+import CatalogueView from "../views/public/CatalogueView.vue";
+import ProduitView from "../views/public/ProduitView.vue";
+import PanierView from "../views/public/PanierView.vue";
+import ConnexionView from "../views/public/ConnexionView.vue";
+import InscriptionView from "../views/public/InscriptionView.vue";
+import CommandeView from "../views/public/CommandeView.vue";
+import PaiementSuccesView from "../views/public/PaiementSuccesView.vue";
+import PaiementAnnuleView from "../views/public/PaiementAnnuleView.vue";
 
 const routes = [
-  { path: "/", name: "accueil", component: AccueilView },
-  { path: "/catalogue", name: "catalogue", component: CatalogueView },
-  { path: "/produit/:id", name: "produit", component: ProduitView },
-  { path: "/panier", name: "panier", component: PanierView },
-  { path: "/connexion", name: "connexion", component: ConnexionView },
-  { path: "/inscription", name: "inscription", component: InscriptionView },
-]
+  { path: "/", component: AccueilView },
+  { path: "/catalogue", component: CatalogueView },
+  { path: "/produit/:id", component: ProduitView },
+  { path: "/panier", component: PanierView },
+  { path: "/connexion", component: ConnexionView },
+  { path: "/inscription", component: InscriptionView },
+  { path: "/commande", component: CommandeView, meta: { exigeConnexion: true } },
+  { path: "/paiement/succes", component: PaiementSuccesView, meta: { exigeConnexion: true } },
+  { path: "/paiement/annule", component: PaiementAnnuleView, meta: { exigeConnexion: true } },
+];
 
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior: () => ({ top: 0 }),
-})
+});
+
+router.beforeEach((to) => {
+  if (to.meta.exigeConnexion && !estConnecte.value) {
+    return { path: "/connexion", query: { redirection: to.fullPath } };
+  }
+});
+
+export default router;
+

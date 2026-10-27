@@ -13,7 +13,7 @@ function lire() {
   }
 }
 
-const etat = reactive({ lignes: lire() })
+export const etat = reactive({ lignes: lire() })
 
 function sauver() {
   try {
@@ -54,4 +54,5 @@ export const panier = {
     sauver()
   },
 }
+
 
