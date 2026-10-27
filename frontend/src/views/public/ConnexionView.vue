@@ -47,9 +47,9 @@ async function seConnecter() {
           <label for="mdp">Mot de passe</label>
           <input id="mdp" v-model="motDePasse" type="password" required autocomplete="current-password" />
         </div>
-        <RouterLink to="/mot-de-passe-oublie" class="oublie">Mot de passe oublié ?</RouterLink>
         <button type="submit" class="valider" :disabled="envoi">Se connecter</button>
-        <p class="bas">Pas encore de compte ? <RouterLink :to="lienInscription">Créer un compte</RouterLink></p>
+        <p class="bas"><RouterLink to="/mot-de-passe-oublie">Mot de passe oublié ?</RouterLink></p>
+      <p class="bas">Pas encore de compte ? <RouterLink :to="lienInscription">Créer un compte</RouterLink></p>
       </form>
     </section>
   </main>
@@ -71,3 +71,4 @@ form { display: flex; flex-direction: column; gap: 16px; }
 .bas { margin: 0; text-align: center; font-size: 14px; }
 .bas a { color: var(--marine); font-weight: 600; text-decoration: underline; }
 </style>
+
