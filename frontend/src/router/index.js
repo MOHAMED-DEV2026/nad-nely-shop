@@ -7,6 +7,9 @@ import PanierView from "../views/public/PanierView.vue";
 import ConnexionView from "../views/public/ConnexionView.vue";
 import InscriptionView from "../views/public/InscriptionView.vue";
 import CommandeView from "../views/public/CommandeView.vue";
+import IntrouvableView from "../views/public/IntrouvableView.vue";
+import MentionsLegalesView from "../views/public/MentionsLegalesView.vue";
+import ConfidentialiteView from "../views/public/ConfidentialiteView.vue";
 import MotDePasseOublieView from "../views/public/MotDePasseOublieView.vue";
 import MonCompteView from "../views/public/MonCompteView.vue";
 import MesCommandesView from "../views/public/MesCommandesView.vue";
@@ -22,6 +25,9 @@ const routes = [
   { path: "/connexion", component: ConnexionView },
   { path: "/inscription", component: InscriptionView },
   { path: "/mot-de-passe-oublie", component: MotDePasseOublieView },
+  { path: "/mentions-legales", component: MentionsLegalesView },
+  { path: "/confidentialite", component: ConfidentialiteView },
+  { path: "/:pathMatch(.*)*", component: IntrouvableView },
   { path: "/commande", component: CommandeView, meta: { exigeConnexion: true } },
   { path: "/mon-compte", component: MonCompteView, meta: { exigeConnexion: true } },
   { path: "/mon-compte/commandes", component: MesCommandesView, meta: { exigeConnexion: true } },
@@ -43,6 +49,7 @@ router.beforeEach((to) => {
 });
 
 export default router;
+
 
 
 
