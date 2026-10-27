@@ -4,10 +4,16 @@ import { useRouter } from "vue-router"
 import logo from "../assets/logo.png"
 import { appelerApi } from "../services/api"
 import { nombreArticles } from "../stores/panier"
+import { auth, estConnecte } from "../stores/auth"
 
 const router = useRouter()
 const recherche = ref("")
 const categories = ref([])
+
+function deconnexion() {
+  auth.fermerSession()
+  router.push("/")
+}
 
 function chercher() {
   router.push({ path: "/catalogue", query: recherche.value ? { recherche: recherche.value } : {} })
@@ -37,7 +43,11 @@ onMounted(async () => {
           <button type="submit">Rechercher</button>
         </form>
         <div class="actions">
-          <RouterLink to="/connexion" class="bouton bouton-contour">Se connecter</RouterLink>
+          <template v-if="estConnecte">
+            <RouterLink to="/mon-compte" class="bouton bouton-contour">Mon compte</RouterLink>
+            <button type="button" class="bouton bouton-contour" @click="deconnexion">Se déconnecter</button>
+          </template>
+          <RouterLink v-else to="/connexion" class="bouton bouton-contour">Se connecter</RouterLink>
           <RouterLink to="/panier" class="bouton bouton-or">Panier<span v-if="nombreArticles > 0" class="pastille">{{ nombreArticles }}</span></RouterLink>
         </div>
       </div>
@@ -68,4 +78,5 @@ onMounted(async () => {
 .categories a { min-height: var(--hauteur-bouton); display: flex; align-items: center; font-size: 15px; font-weight: 500; color: var(--marine); }
 .categories a:hover { text-decoration: underline; }
 </style>
+
 
