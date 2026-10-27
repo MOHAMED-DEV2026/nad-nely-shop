@@ -4,6 +4,7 @@ import CatalogueView from "../views/public/CatalogueView.vue"
 import ProduitView from "../views/public/ProduitView.vue"
 import PanierView from "../views/public/PanierView.vue"
 import ConnexionView from "../views/public/ConnexionView.vue"
+import InscriptionView from "../views/public/InscriptionView.vue"
 
 const routes = [
   { path: "/", name: "accueil", component: AccueilView },
@@ -11,6 +12,7 @@ const routes = [
   { path: "/produit/:id", name: "produit", component: ProduitView },
   { path: "/panier", name: "panier", component: PanierView },
   { path: "/connexion", name: "connexion", component: ConnexionView },
+  { path: "/inscription", name: "inscription", component: InscriptionView },
 ]
 
 export default createRouter({
