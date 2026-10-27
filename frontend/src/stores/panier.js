@@ -35,7 +35,7 @@ export const panier = {
       ligne.stock = produit.stock
       ligne.quantite = Math.min(ligne.quantite + quantite, produit.stock)
     } else {
-      etat.lignes.push({ id_produit: produit.id_produit, nom: produit.nom, prix: produit.prix, image: produit.image, stock: produit.stock, quantite: Math.min(quantite, produit.stock) })
+      etat.lignes.push({ id_produit: produit.id_produit, nom: produit.nom, prix: produit.prix, image: produit.image, categorie: produit.categorie, stock: produit.stock, quantite: Math.min(quantite, produit.stock) })
     }
     sauver()
   },
@@ -54,3 +54,4 @@ export const panier = {
     sauver()
   },
 }
+
