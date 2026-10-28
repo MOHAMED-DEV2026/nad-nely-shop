@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const { body, validationResult } = require('express-validator');
+const fs = require('fs');
+const path = require('path');
 const db = require('../config/db');
 const upload = require('../middleware/upload');
 const { exigerConnexion, exigerAdmin } = require('../middleware/auth');
@@ -115,8 +117,12 @@ router.delete('/:id', async (req, res, next) => {
       await db.query('UPDATE produit SET actif = 0 WHERE id_produit = ?', [id]);
       return res.json({ message: 'Produit déjà commandé : il a été désactivé et non supprimé' });
     }
+    const [anciens] = await db.query('SELECT image FROM produit WHERE id_produit = ?', [id]);
     const [r] = await db.query('DELETE FROM produit WHERE id_produit = ?', [id]);
     if (r.affectedRows === 0) return res.status(404).json({ message: 'Produit introuvable' });
+    if (anciens[0] && anciens[0].image) {
+      fs.unlink(path.join(__dirname, '..', '..', 'uploads', anciens[0].image), () => {});
+    }
     res.json({ message: 'Produit supprimé' });
   } catch (e) { next(e); }
 });
