@@ -2,7 +2,7 @@ const router = require('express').Router();
 const { body, validationResult } = require('express-validator');
 const db = require('../config/db');
 const { stripe } = require('../config/stripe');
-const { exigerConnexion } = require('../middleware/auth');
+const { exigerConnexion } = require('../middlewares/auth');
 
 // POST /api/paiements/verification : vérifie le paiement auprès de Stripe puis confirme la commande (BF18)
 // Corps attendu : { "session_id": "cs_test_..." }

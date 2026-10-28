@@ -3,8 +3,8 @@ const { body, validationResult } = require('express-validator');
 const fs = require('fs');
 const path = require('path');
 const db = require('../config/db');
-const upload = require('../middleware/upload');
-const { exigerConnexion, exigerAdmin } = require('../middleware/auth');
+const upload = require('../middlewares/upload');
+const { exigerConnexion, exigerAdmin } = require('../middlewares/auth');
 
 // Toutes les routes de ce fichier sont réservées à l'administrateur
 router.use(exigerConnexion, exigerAdmin);

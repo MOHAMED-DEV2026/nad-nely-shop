@@ -2,7 +2,7 @@ const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const { body, validationResult } = require('express-validator');
 const db = require('../config/db');
-const { exigerConnexion } = require('../middleware/auth');
+const { exigerConnexion } = require('../middlewares/auth');
 
 // RG02 : 8 caractères minimum, dont une majuscule, une minuscule et un chiffre
 const POLITIQUE_MDP = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;

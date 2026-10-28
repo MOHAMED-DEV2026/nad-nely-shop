@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { body, validationResult } = require('express-validator');
 const db = require('../config/db');
-const { exigerConnexion } = require('../middleware/auth');
+const { exigerConnexion } = require('../middlewares/auth');
 const { creerSessionPaiement } = require('../config/stripe');
 
 const COMMUNES = ['Acoua', 'Bandraboua', 'Bandrélé', 'Bouéni', 'Chiconi', 'Chirongui', 'Dembéni',

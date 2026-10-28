@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { body, validationResult } = require('express-validator');
 const db = require('../config/db');
-const { exigerConnexion, exigerAdmin } = require('../middleware/auth');
+const { exigerConnexion, exigerAdmin } = require('../middlewares/auth');
 
 router.use(exigerConnexion, exigerAdmin);
 

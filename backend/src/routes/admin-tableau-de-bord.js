@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const db = require('../config/db');
-const { exigerConnexion, exigerAdmin } = require('../middleware/auth');
+const { exigerConnexion, exigerAdmin } = require('../middlewares/auth');
 
 router.use(exigerConnexion, exigerAdmin);
 
