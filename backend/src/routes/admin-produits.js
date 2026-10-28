@@ -93,11 +93,11 @@ router.put('/:id', envoyerImage, regles, async (req, res, next) => {
     const [r] = await db.query(
       `UPDATE produit SET nom = ?, description = ?, prix = ?, stock = ?,
               image = COALESCE(?, image), id_categorie = ?, date_fabrication = ?,
-              date_expiration = ?, marque = ?, origine = ?
+              date_expiration = ?, marque = ?, origine = ?, actif = COALESCE(?, actif)
        WHERE id_produit = ?`,
       [b.nom, b.description, b.prix, b.stock, req.file ? req.file.filename : null,
        b.id_categorie, b.date_fabrication || null, b.date_expiration || null,
-       b.marque || null, b.origine || null, Number(req.params.id)]
+       b.marque || null, b.origine || null, b.actif === undefined ? null : b.actif, Number(req.params.id)]
     );
     if (r.affectedRows === 0) return res.status(404).json({ message: 'Produit introuvable' });
     res.json({ message: 'Produit modifié' });
