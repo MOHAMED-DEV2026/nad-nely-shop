@@ -90,7 +90,7 @@ async function confirmerSuppression() {
                 <td class="nb">{{ c.nb_produits }}</td>
                 <td>
                   <div class="actions">
-                    <button type="button" class="bouton-contour petit" @click="modifier(c)">Modifier</button>
+                    <button type="button" class="bouton bouton-contour petit" @click="modifier(c)">Modifier</button>
                     <button type="button" class="suppr" :disabled="c.nb_produits > 0" @click="aSupprimer = c">Supprimer</button>
                     <span v-if="c.nb_produits > 0" class="note">Produits rattachés : suppression impossible</span>
                   </div>
@@ -114,7 +114,7 @@ async function confirmerSuppression() {
           </div>
           <div class="actions">
             <button type="submit" class="bouton">{{ enModification === null ? "Ajouter" : "Enregistrer" }}</button>
-            <button v-if="enModification !== null" type="button" class="bouton-contour" @click="annulerFormulaire">Annuler</button>
+            <button v-if="enModification !== null" type="button" class="bouton bouton-contour" @click="annulerFormulaire">Annuler</button>
           </div>
         </form>
       </section>
@@ -124,7 +124,7 @@ async function confirmerSuppression() {
       <p>Supprimer la catégorie « {{ aSupprimer.nom }} » ? Cette action est définitive.</p>
       <div class="actions">
         <button type="button" class="oui" @click="confirmerSuppression">Oui, supprimer</button>
-        <button type="button" class="bouton-contour" @click="aSupprimer = null">Annuler</button>
+        <button type="button" class="bouton bouton-contour" @click="aSupprimer = null">Annuler</button>
       </div>
     </section>
   </div>

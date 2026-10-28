@@ -188,7 +188,7 @@ async function envoyer() {
       </div>
       <div class="actions">
         <button class="bouton" type="submit" :disabled="enCours">{{ enCours ? "Enregistrement..." : "Enregistrer" }}</button>
-        <RouterLink to="/admin/produits" class="bouton-contour">Annuler</RouterLink>
+        <RouterLink to="/admin/produits" class="bouton bouton-contour">Annuler</RouterLink>
       </div>
     </form>
   </div>
@@ -212,7 +212,7 @@ textarea { resize: vertical; }
 .case { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
 .case label { margin: 0; }
 .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.25rem; }
-.actions a { text-decoration: none; display: inline-block; text-align: center; }
+.actions a { text-decoration: none; }
 @media (min-width: 768px) {
   .grille { grid-template-columns: 1fr 1fr; }
 }
