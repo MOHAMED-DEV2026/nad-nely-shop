@@ -9,6 +9,7 @@ import InscriptionView from "../views/public/InscriptionView.vue";
 import CommandeView from "../views/public/CommandeView.vue";
 import AdminLayout from "../views/admin/AdminLayout.vue";
 import AdminTableauView from "../views/admin/AdminTableauView.vue";
+import AdminProduitsView from "../views/admin/AdminProduitsView.vue";
 import IntrouvableView from "../views/public/IntrouvableView.vue";
 import MentionsLegalesView from "../views/public/MentionsLegalesView.vue";
 import ConfidentialiteView from "../views/public/ConfidentialiteView.vue";
@@ -30,7 +31,7 @@ const routes = [
   { path: "/mentions-legales", component: MentionsLegalesView },
   { path: "/confidentialite", component: ConfidentialiteView },
   { path: "/:pathMatch(.*)*", component: IntrouvableView },
-  { path: "/admin", component: AdminLayout, meta: { exigeAdmin: true }, children: [{ path: "", component: AdminTableauView }] },
+  { path: "/admin", component: AdminLayout, meta: { exigeAdmin: true }, children: [{ path: "", component: AdminTableauView }, { path: "produits", component: AdminProduitsView }] },
   { path: "/commande", component: CommandeView, meta: { exigeConnexion: true } },
   { path: "/mon-compte", component: MonCompteView, meta: { exigeConnexion: true } },
   { path: "/mon-compte/commandes", component: MesCommandesView, meta: { exigeConnexion: true } },
@@ -56,6 +57,7 @@ router.beforeEach((to) => {
 });
 
 export default router;
+
 
 
 
