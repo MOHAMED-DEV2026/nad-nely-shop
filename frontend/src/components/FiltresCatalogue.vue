@@ -12,6 +12,7 @@ const prixMin = ref("")
 const prixMax = ref("")
 const marque = ref("")
 const origine = ref("")
+const publics = [{ valeur: "femme", nom: "Femme" }, { valeur: "homme", nom: "Homme" }]
 
 // Recopie les filtres de l adresse dans les champs
 function synchroniser() {
@@ -65,6 +66,11 @@ watch(() => route.query, synchroniser, { immediate: true })
       <h2>Catégorie</h2>
       <button type="button" class="choix" :class="{ actif: !route.query.categorie }" @click="appliquer({ categorie: null })">Toutes les catégories</button>
       <button v-for="c in categories" :key="c.id_categorie" type="button" class="choix" :class="{ actif: String(route.query.categorie) === String(c.id_categorie) }" @click="appliquer({ categorie: c.id_categorie })">{{ c.nom }}</button>
+    </div>
+    <div>
+      <h2>Public</h2>
+      <button type="button" class="choix" :class="{ actif: !route.query.public }" @click="appliquer({ public: null })">Tous</button>
+      <button v-for="p in publics" :key="p.valeur" type="button" class="choix" :class="{ actif: route.query.public === p.valeur }" @click="appliquer({ public: p.valeur })">{{ p.nom }}</button>
     </div>
     <div>
       <h2>Prix</h2>

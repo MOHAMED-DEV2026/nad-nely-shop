@@ -47,6 +47,7 @@ CREATE TABLE PRODUIT (
     date_expiration  DATE NULL,
     marque           VARCHAR(50) NULL,
     origine          VARCHAR(50) NULL,
+    public_cible     ENUM('femme','homme','mixte') NOT NULL DEFAULT 'mixte',
     CONSTRAINT fk_produit_categorie
         FOREIGN KEY (id_categorie) REFERENCES CATEGORIE (id_categorie)
         ON UPDATE CASCADE ON DELETE RESTRICT,

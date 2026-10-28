@@ -8,7 +8,7 @@ const router = useRouter()
 const id = route.params.id
 const modification = Boolean(id)
 const categories = ref([])
-const form = ref({ nom: "", description: "", prix: "", stock: 0, id_categorie: "", marque: "", origine: "", date_fabrication: "", date_expiration: "", actif: true })
+const form = ref({ nom: "", description: "", prix: "", stock: 0, id_categorie: "", marque: "", origine: "", date_fabrication: "", date_expiration: "", public_cible: "mixte", actif: true })
 const imageActuelle = ref("")
 const fichier = ref(null)
 const apercu = ref("")
@@ -28,7 +28,7 @@ onMounted(async () => {
     categories.value = await appelerApi("/categories")
     if (modification) {
       const p = await appelerApi("/admin/produits/" + id)
-      form.value = { nom: p.nom, description: p.description, prix: p.prix, stock: p.stock, id_categorie: p.id_categorie, marque: p.marque || "", origine: p.origine || "", date_fabrication: versDate(p.date_fabrication), date_expiration: versDate(p.date_expiration), actif: Boolean(p.actif) }
+      form.value = { nom: p.nom, description: p.description, prix: p.prix, stock: p.stock, id_categorie: p.id_categorie, marque: p.marque || "", origine: p.origine || "", date_fabrication: versDate(p.date_fabrication), date_expiration: versDate(p.date_expiration), public_cible: p.public_cible || "mixte", actif: Boolean(p.actif) }
       imageActuelle.value = p.image || ""
     }
   } catch (e) {
@@ -85,6 +85,7 @@ async function envoyer() {
   donnees.append("prix", f.prix)
   donnees.append("stock", f.stock)
   donnees.append("id_categorie", f.id_categorie)
+  donnees.append("public_cible", f.public_cible)
   donnees.append("marque", f.marque.trim())
   donnees.append("origine", f.origine.trim())
   donnees.append("date_fabrication", f.date_fabrication)
@@ -143,6 +144,14 @@ async function envoyer() {
           <option v-for="c in categories" :key="c.id_categorie" :value="c.id_categorie">{{ c.nom }}</option>
         </select>
         <p v-if="erreurs.id_categorie" class="erreur">{{ erreurs.id_categorie }}</p>
+      </div>
+      <div class="champ">
+        <label for="public">Public</label>
+        <select id="public" v-model="form.public_cible">
+          <option value="femme">Femme</option>
+          <option value="homme">Homme</option>
+          <option value="mixte">Mixte (femme et homme)</option>
+        </select>
       </div>
       <div class="grille">
         <div class="champ">

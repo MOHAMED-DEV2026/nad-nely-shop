@@ -26,6 +26,7 @@ router.get('/', async (req, res, next) => {
     if (q.prixMax !== undefined && q.prixMax !== '' && !isNaN(q.prixMax)) { conditions.push('p.prix <= ?'); valeurs.push(Number(q.prixMax)); }
     if (q.marque) { conditions.push('p.marque = ?'); valeurs.push(q.marque); }
     if (q.origine) { conditions.push('p.origine = ?'); valeurs.push(q.origine); }
+    if (q.public === 'femme' || q.public === 'homme') { conditions.push('p.public_cible IN (?, ?)'); valeurs.push(q.public, 'mixte'); }
 
     const ordre = TRIS[q.tri] || TRIS.nouveautes;
     const page = Math.max(1, parseInt(q.page, 10) || 1);

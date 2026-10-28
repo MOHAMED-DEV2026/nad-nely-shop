@@ -17,6 +17,7 @@ const regles = [
   body('id_categorie').isInt({ min: 1 }).withMessage('Catégorie obligatoire'),
   body('marque').optional({ values: 'falsy' }).trim().isLength({ max: 50 }),
   body('origine').optional({ values: 'falsy' }).trim().isLength({ max: 50 }),
+  body('public_cible').optional({ values: 'falsy' }).isIn(['femme', 'homme', 'mixte']),
   body('date_fabrication').optional({ values: 'falsy' }).isISO8601(),
   body('date_expiration').optional({ values: 'falsy' }).isISO8601(),
 ];
@@ -68,11 +69,11 @@ router.post('/', envoyerImage, regles, async (req, res, next) => {
     }
     const [r] = await db.query(
       `INSERT INTO produit (nom, description, prix, stock, image, id_categorie,
-                            date_fabrication, date_expiration, marque, origine)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                            date_fabrication, date_expiration, marque, origine, public_cible)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [b.nom, b.description, b.prix, b.stock, req.file ? req.file.filename : null,
        b.id_categorie, b.date_fabrication || null, b.date_expiration || null,
-       b.marque || null, b.origine || null]
+       b.marque || null, b.origine || null, b.public_cible || 'mixte']
     );
     res.status(201).json({ id_produit: r.insertId, message: 'Produit ajouté' });
   } catch (e) {
@@ -93,11 +94,11 @@ router.put('/:id', envoyerImage, regles, async (req, res, next) => {
     const [r] = await db.query(
       `UPDATE produit SET nom = ?, description = ?, prix = ?, stock = ?,
               image = COALESCE(?, image), id_categorie = ?, date_fabrication = ?,
-              date_expiration = ?, marque = ?, origine = ?, actif = COALESCE(?, actif)
+              date_expiration = ?, marque = ?, origine = ?, public_cible = COALESCE(?, public_cible), actif = COALESCE(?, actif)
        WHERE id_produit = ?`,
       [b.nom, b.description, b.prix, b.stock, req.file ? req.file.filename : null,
        b.id_categorie, b.date_fabrication || null, b.date_expiration || null,
-       b.marque || null, b.origine || null, b.actif === undefined ? null : b.actif, Number(req.params.id)]
+       b.marque || null, b.origine || null, b.public_cible || null, b.actif === undefined ? null : b.actif, Number(req.params.id)]
     );
     if (r.affectedRows === 0) return res.status(404).json({ message: 'Produit introuvable' });
     res.json({ message: 'Produit modifié' });
