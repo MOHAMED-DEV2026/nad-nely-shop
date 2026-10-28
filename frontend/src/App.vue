@@ -1,17 +1,22 @@
 <script setup>
-import EnTete from './components/EnTete.vue'
-import PiedDePage from './components/PiedDePage.vue'
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+import EnTete from "./components/EnTete.vue";
+import PiedDePage from "./components/PiedDePage.vue";
+
+const route = useRoute();
+const admin = computed(() => route.path.startsWith("/admin"));
 </script>
 
 <template>
   <div class="appli">
-    <EnTete />
+    <EnTete v-if="!admin" />
     <div class="contenu"><RouterView /></div>
-    <PiedDePage />
+    <PiedDePage v-if="!admin" />
   </div>
 </template>
 
-<style>
-.appli { min-height: 100vh; display: flex; flex-direction: column; }
+<style scoped>
+.appli { display: flex; flex-direction: column; min-height: 100vh; }
 .contenu { flex: 1; }
 </style>

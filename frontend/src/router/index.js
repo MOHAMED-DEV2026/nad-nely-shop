@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { estConnecte } from "../stores/auth.js";
+import { estConnecte, estAdmin } from "../stores/auth.js";
 import AccueilView from "../views/public/AccueilView.vue";
 import CatalogueView from "../views/public/CatalogueView.vue";
 import ProduitView from "../views/public/ProduitView.vue";
@@ -7,6 +7,8 @@ import PanierView from "../views/public/PanierView.vue";
 import ConnexionView from "../views/public/ConnexionView.vue";
 import InscriptionView from "../views/public/InscriptionView.vue";
 import CommandeView from "../views/public/CommandeView.vue";
+import AdminLayout from "../views/admin/AdminLayout.vue";
+import AdminTableauView from "../views/admin/AdminTableauView.vue";
 import IntrouvableView from "../views/public/IntrouvableView.vue";
 import MentionsLegalesView from "../views/public/MentionsLegalesView.vue";
 import ConfidentialiteView from "../views/public/ConfidentialiteView.vue";
@@ -28,6 +30,7 @@ const routes = [
   { path: "/mentions-legales", component: MentionsLegalesView },
   { path: "/confidentialite", component: ConfidentialiteView },
   { path: "/:pathMatch(.*)*", component: IntrouvableView },
+  { path: "/admin", component: AdminLayout, meta: { exigeAdmin: true }, children: [{ path: "", component: AdminTableauView }] },
   { path: "/commande", component: CommandeView, meta: { exigeConnexion: true } },
   { path: "/mon-compte", component: MonCompteView, meta: { exigeConnexion: true } },
   { path: "/mon-compte/commandes", component: MesCommandesView, meta: { exigeConnexion: true } },
@@ -43,12 +46,17 @@ const router = createRouter({
 });
 
 router.beforeEach((to) => {
+  if (to.meta.exigeAdmin) {
+    if (!estConnecte.value) return { path: "/connexion", query: { redirection: to.fullPath } };
+    if (!estAdmin.value) return "/";
+  }
   if (to.meta.exigeConnexion && !estConnecte.value) {
     return { path: "/connexion", query: { redirection: to.fullPath } };
   }
 });
 
 export default router;
+
 
 
 
