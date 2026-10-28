@@ -12,7 +12,8 @@ import AdminTableauView from "../views/admin/AdminTableauView.vue";
 import AdminProduitsView from "../views/admin/AdminProduitsView.vue"
 import AdminProduitForm from "../views/admin/AdminProduitForm.vue"
 import AdminCategoriesView from "../views/admin/AdminCategoriesView.vue"
-import AdminCommandesView from "../views/admin/AdminCommandesView.vue";
+import AdminCommandesView from "../views/admin/AdminCommandesView.vue"
+import AdminCommandeDetailView from "../views/admin/AdminCommandeDetailView.vue";
 import IntrouvableView from "../views/public/IntrouvableView.vue";
 import MentionsLegalesView from "../views/public/MentionsLegalesView.vue";
 import ConfidentialiteView from "../views/public/ConfidentialiteView.vue";
@@ -38,7 +39,8 @@ const routes = [
       { path: "produits/nouveau", component: AdminProduitForm },
       { path: "produits/:id", component: AdminProduitForm },
       { path: "categories", component: AdminCategoriesView },
-      { path: "commandes", component: AdminCommandesView }] },
+      { path: "commandes", component: AdminCommandesView },
+      { path: "commandes/:id", component: AdminCommandeDetailView }] },
   { path: "/commande", component: CommandeView, meta: { exigeConnexion: true } },
   { path: "/mon-compte", component: MonCompteView, meta: { exigeConnexion: true } },
   { path: "/mon-compte/commandes", component: MesCommandesView, meta: { exigeConnexion: true } },
