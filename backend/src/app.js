@@ -21,8 +21,7 @@ const limiteAuth = rateLimit({ windowMs: 15 * 60 * 1000, max: 30 });
 
 app.get('/api/sante', (req, res) => res.json({ ok: true }));
 app.use('/api/auth', limiteAuth, require('./routes/auth'));
-app.use('/api/categories', require('./routes/categories'));
-app.use('/api/produits', require('./routes/produits'));
+app.use('/api', require('./routes/catalogue.routes'));
 app.use('/api/commandes', require('./routes/commandes'));
 app.use('/api/admin/produits', require('./routes/admin-produits'));
 app.use('/api/admin/categories', require('./routes/admin-categories'));
