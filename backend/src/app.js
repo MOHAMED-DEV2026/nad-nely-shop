@@ -20,7 +20,7 @@ app.use(requestLogger);
 const limiteAuth = rateLimit({ windowMs: 15 * 60 * 1000, max: 30 });
 
 app.get('/api/sante', (req, res) => res.json({ ok: true }));
-app.use('/api/auth', limiteAuth, require('./routes/auth'));
+app.use('/api/auth', limiteAuth, require('./routes/auth.routes'));
 app.use('/api', require('./routes/catalogue.routes'));
 app.use('/api/commandes', require('./routes/commandes'));
 app.use('/api/admin/produits', require('./routes/admin-produits'));
@@ -29,7 +29,7 @@ app.use('/api/admin/commandes', require('./routes/admin-commandes'));
 app.use('/api/paiements', require('./routes/paiements'));
 app.use('/api/admin/tableau-de-bord', require('./routes/admin-tableau-de-bord'));
 app.use('/api/admin/utilisateurs', require('./routes/admin-utilisateurs'));
-app.use('/api/compte', require('./routes/compte'));
+app.use('/api/compte', require('./routes/compte.routes'));
 
 // Images des produits (fichiers du dossier uploads)
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
