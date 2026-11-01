@@ -72,4 +72,67 @@ async function decrementerStock(cx, idProduit, quantite) {
   await cx.query('UPDATE produit SET stock = stock - ? WHERE id_produit = ?', [quantite, idProduit]);
 }
 
-module.exports = { chercher, listerMarques, listerOrigines, trouverActifParId, decrementerStock };
+// ----- Partie administration -----
+
+// Tous les produits, actifs ou non (BF09 à BF11)
+async function listerTous() {
+  const [rows] = await db.query(
+    `SELECT p.*, c.nom AS categorie FROM produit p
+     JOIN categorie c ON c.id_categorie = p.id_categorie
+     ORDER BY p.id_produit DESC`
+  );
+  return rows;
+}
+
+// Un produit (actif ou non), ou null
+async function trouverParId(id) {
+  const [rows] = await db.query('SELECT * FROM produit WHERE id_produit = ?', [id]);
+  return rows[0] ?? null;
+}
+
+// Crée un produit et renvoie son identifiant
+async function creer(p) {
+  const [r] = await db.query(
+    `INSERT INTO produit (nom, description, prix, stock, image, id_categorie,
+                          date_fabrication, date_expiration, marque, origine, public_cible)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [p.nom, p.description, p.prix, p.stock, p.image, p.idCategorie,
+     p.dateFabrication, p.dateExpiration, p.marque, p.origine, p.publicCible]
+  );
+  return r.insertId;
+}
+
+// Modifie un produit et renvoie le nombre de lignes touchées (0 = introuvable).
+// Une valeur null pour image, publicCible ou actif veut dire « ne pas changer » (COALESCE).
+async function modifier(id, p) {
+  const [r] = await db.query(
+    `UPDATE produit SET nom = ?, description = ?, prix = ?, stock = ?,
+            image = COALESCE(?, image), id_categorie = ?, date_fabrication = ?,
+            date_expiration = ?, marque = ?, origine = ?, public_cible = COALESCE(?, public_cible), actif = COALESCE(?, actif)
+     WHERE id_produit = ?`,
+    [p.nom, p.description, p.prix, p.stock, p.image, p.idCategorie,
+     p.dateFabrication, p.dateExpiration, p.marque, p.origine, p.publicCible, p.actif, id]
+  );
+  return r.affectedRows;
+}
+
+// RG13 : un produit déjà commandé ne peut pas être supprimé
+async function estCommande(id) {
+  const [rows] = await db.query('SELECT 1 FROM ligne_commande WHERE id_produit = ? LIMIT 1', [id]);
+  return rows.length > 0;
+}
+
+async function desactiver(id) {
+  await db.query('UPDATE produit SET actif = 0 WHERE id_produit = ?', [id]);
+}
+
+// Supprime un produit et renvoie le nombre de lignes touchées
+async function supprimer(id) {
+  const [r] = await db.query('DELETE FROM produit WHERE id_produit = ?', [id]);
+  return r.affectedRows;
+}
+
+module.exports = {
+  chercher, listerMarques, listerOrigines, trouverActifParId, decrementerStock,
+  listerTous, trouverParId, creer, modifier, estCommande, desactiver, supprimer,
+};

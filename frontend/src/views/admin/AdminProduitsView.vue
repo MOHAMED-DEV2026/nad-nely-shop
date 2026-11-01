@@ -19,7 +19,13 @@ async function charger() {
   }
 }
 
-onMounted(charger);
+onMounted(() => {
+  try {
+    const m = sessionStorage.getItem("messageAdmin");
+    if (m) { message.value = m; sessionStorage.removeItem("messageAdmin"); }
+  } catch (e) { /* stockage indisponible : pas de message */ }
+  charger();
+});
 
 const categories = computed(() => [...new Set(produits.value.map((p) => p.categorie))].sort());
 

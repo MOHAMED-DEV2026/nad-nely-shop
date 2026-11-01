@@ -94,7 +94,8 @@ async function envoyer() {
   if (fichier.value) donnees.append("image", fichier.value)
   try {
     await appelerApi(modification ? "/admin/produits/" + id : "/admin/produits", { method: modification ? "PUT" : "POST", corps: donnees })
-    router.push("/admin/produits")
+    try { sessionStorage.setItem("messageAdmin", "Produit enregistré."); } catch (e) { /* ignoré */ }
+  router.push("/admin/produits")
   } catch (e) {
     if (e.donnees && e.donnees.erreurs) {
       const liste = {}
