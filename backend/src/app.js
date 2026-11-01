@@ -24,7 +24,6 @@ app.use('/api/auth', limiteAuth, require('./routes/auth.routes'));
 app.use('/api', require('./routes/catalogue.routes'));
 app.use('/api/commandes', require('./routes/commande.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));
-app.use('/api/admin/commandes', require('./routes/admin-commandes'));
 app.use('/api/paiements', require('./routes/paiement.routes'));
 app.use('/api/admin/tableau-de-bord', require('./routes/admin-tableau-de-bord'));
 app.use('/api/admin/utilisateurs', require('./routes/admin-utilisateurs'));

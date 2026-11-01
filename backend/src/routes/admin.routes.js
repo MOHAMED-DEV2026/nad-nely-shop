@@ -3,9 +3,10 @@ const router = require('express').Router();
 const { exigerConnexion, exigerAdmin } = require('../middlewares/auth');
 const validateId = require('../middlewares/validateId');
 const envoyerImage = require('../middlewares/uploadImage');
-const { validerProduit, validerCategorie } = require('../middlewares/validateAdmin');
+const { validerProduit, validerCategorie, validerAction } = require('../middlewares/validateAdmin');
 const produits = require('../controllers/adminProduit.controller');
 const categories = require('../controllers/adminCategorie.controller');
+const commandes = require('../controllers/adminCommande.controller');
 
 router.use(exigerConnexion, exigerAdmin);
 
@@ -21,5 +22,10 @@ router.get('/categories', categories.lister);
 router.post('/categories', validerCategorie, categories.creer);
 router.put('/categories/:id', validateId, validerCategorie, categories.modifier);
 router.delete('/categories/:id', validateId, categories.supprimer);
+
+// Commandes (BF21 à BF23)
+router.get('/commandes', commandes.lister);
+router.get('/commandes/:id', validateId, commandes.obtenir);
+router.patch('/commandes/:id/statut', validateId, validerAction, commandes.changerStatut);
 
 module.exports = router;

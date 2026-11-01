@@ -23,4 +23,12 @@ const validerCategorie = [
   validation,
 ];
 
-module.exports = { validerProduit, validerCategorie };
+// Changement de statut d'une commande : « avancer » ou « annuler » seulement
+function validerAction(req, res, next) {
+  if (!['avancer', 'annuler'].includes(req.body && req.body.action)) {
+    return res.status(400).json({ message: 'Action invalide' });
+  }
+  next();
+}
+
+module.exports = { validerProduit, validerCategorie, validerAction };
