@@ -67,4 +67,9 @@ async function trouverActifParId(id) {
   return rows[0] ?? null;
 }
 
-module.exports = { chercher, listerMarques, listerOrigines, trouverActifParId };
+// RG38 : retire du stock la quantité commandée (dans une transaction, avec la connexion « cx »)
+async function decrementerStock(cx, idProduit, quantite) {
+  await cx.query('UPDATE produit SET stock = stock - ? WHERE id_produit = ?', [quantite, idProduit]);
+}
+
+module.exports = { chercher, listerMarques, listerOrigines, trouverActifParId, decrementerStock };

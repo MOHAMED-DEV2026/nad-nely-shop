@@ -67,7 +67,29 @@ async function trouverPaiement(idCommande) {
   return rows[0] ?? null;
 }
 
+// Verrouille une commande (FOR UPDATE) et renvoie son statut, ou null si elle n'existe pas
+async function verrouillerStatut(cx, id) {
+  const [rows] = await cx.query('SELECT statut FROM commande WHERE id_commande = ? FOR UPDATE', [id]);
+  return rows[0]?.statut ?? null;
+}
+
+// Verrouille les produits d'une commande, avec leur stock actuel (RG39)
+async function verrouillerLignesAvecStock(cx, idCommande) {
+  const [rows] = await cx.query(
+    `SELECT lc.id_produit, lc.quantite, p.stock
+       FROM ligne_commande lc JOIN produit p ON p.id_produit = lc.id_produit
+      WHERE lc.id_commande = ? FOR UPDATE`,
+    [idCommande]
+  );
+  return rows;
+}
+
+async function changerStatut(cx, id, statut) {
+  await cx.query('UPDATE commande SET statut = ? WHERE id_commande = ?', [statut, id]);
+}
+
 module.exports = {
+  verrouillerStatut, verrouillerLignesAvecStock, changerStatut,
   verrouillerProduits, inserer, insererLigne, insererPaiement,
   listerParUtilisateur, trouverParId, listerLignes, trouverPaiement,
 };
