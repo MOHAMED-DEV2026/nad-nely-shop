@@ -2,6 +2,8 @@
 import { ref, onMounted } from "vue";
 import { appelerApi } from "../../services/api.js";
 import CarteProduit from "../../components/CarteProduit.vue";
+// Photo du hero : pour en changer, remplacer hero1.jpg par hero2.jpg ou hero3.jpg
+import photoHero from "../../assets/hero2.jpg";
 
 const categories = ref([]);
 const nouveautes = ref([]);
@@ -27,13 +29,13 @@ onMounted(async () => {
 
 <template>
   <div>
-    <section class="hero">
+    <section class="hero" :style="{ '--photo': 'url(' + photoHero + ')' }">
       <div class="interieur">
-        <p class="lieu">Mamoudzou · Mayotte</p>
-        <h1>Mode, parfums et beauté, choisis avec soin</h1>
+        <p class="lieu">NAD-NELY SHOP</p>
+        <h1>Votre style, Votre beauté, votre élégance</h1>
         <p class="texte">Vêtements, chaussures, sacs, parfums et cosmétiques. Commandez en ligne, payez en sécurité, recevez chez vous ou retirez en boutique.</p>
         <div class="boutons">
-          <RouterLink class="bouton" to="/catalogue">Découvrir le catalogue</RouterLink>
+          <RouterLink class="bouton bouton-or" to="/catalogue">Découvrir le catalogue</RouterLink>
           <RouterLink class="bouton bouton-contour" to="/catalogue?tri=nouveautes">Voir les nouveautés</RouterLink>
         </div>
       </div>
@@ -69,11 +71,13 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.hero { background: var(--rose); }
-.interieur { max-width: var(--largeur-max); margin: 0 auto; padding: 40px 16px; }
-.lieu { margin: 0 0 8px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--marine); font-weight: 600; }
-.hero h1 { font-size: 32px; line-height: 1.15; margin: 0 0 12px; }
-.texte { margin: 0 0 24px; max-width: 520px; }
+/* Photo en fond, voile bleu marine par-dessus pour que le texte reste lisible sur n'importe quelle photo */
+.hero { min-height: 400px; display: flex; align-items: center; color: var(--blanc); background: linear-gradient(rgba(27, 42, 74, 0.72), rgba(27, 42, 74, 0.72)), var(--photo) center 10% / cover no-repeat; }
+.interieur { width: 100%; max-width: var(--largeur-max); margin: 0 auto; padding: 40px 16px; }
+.lieu { margin: 0 0 8px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--or); font-weight: 600; }
+.hero h1 { font-size: 32px; line-height: 1.15; margin: 0 0 12px; color: var(--blanc); max-width: 620px; }
+.texte { margin: 0 0 24px; max-width: 520px; color: var(--creme); }
+.hero .bouton-contour { color: var(--blanc); border-color: var(--blanc); background: transparent; }
 .boutons { display: flex; flex-wrap: wrap; gap: 12px; }
 .bloc { max-width: var(--largeur-max); margin: 0 auto; padding: 32px 16px 8px; }
 .bloc h2 { font-size: 26px; margin: 0 0 8px; }
@@ -85,9 +89,9 @@ onMounted(async () => {
 .entete-bloc h2 { margin: 0; }
 .tout { min-height: 44px; display: flex; align-items: center; color: var(--marine); font-weight: 600; text-decoration: underline; }
 .produits { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-.garanties { display: grid; gap: 16px; background: var(--blanc); border: 1px solid var(--bordure); border-radius: 16px; padding: 20px; }
+.garanties { display: grid; gap: 16px; background: var(--blanc); border: 1px solid var(--bordure); border-radius: 16px;padding: 20px; }
 .garanties h3 { margin: 0 0 4px; font-size: 18px; }
 .garanties p { margin: 0; font-size: 14px; color: var(--texte-doux); }
-@media (min-width: 768px) { .hero h1 { font-size: 44px; } .interieur { padding: 64px 32px; } .categories { grid-template-columns: repeat(3, 1fr); } .produits { grid-template-columns: repeat(3, 1fr); gap: 24px; } .garanties { grid-template-columns: repeat(3, 1fr); padding: 32px; } }
-@media (min-width: 1024px) { .hero h1 { font-size: 52px; } .categories { grid-template-columns: repeat(6, 1fr); } }
+@media (min-width: 768px) { .hero { min-height: 480px; background: linear-gradient(90deg, rgba(27, 42, 74, 0.85) 0%, rgba(27, 42, 74, 0.6) 55%, rgba(27, 42, 74, 0.2) 100%), var(--photo) center 10% / cover no-repeat; } .hero h1 { font-size: 44px; } .interieur { padding: 64px 32px; } .categories { grid-template-columns: repeat(3, 1fr); } .produits { grid-template-columns: repeat(3, 1fr); gap: 24px; } .garanties { grid-template-columns: repeat(3, 1fr); padding: 32px; } }
+@media (min-width: 1024px) { .hero { min-height: 540px; } .hero h1 { font-size: 52px; } .categories { grid-template-columns: repeat(6, 1fr); } }
 </style>
