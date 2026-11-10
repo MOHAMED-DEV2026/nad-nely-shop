@@ -13,6 +13,7 @@ const commune = ref("");
 const telephone = ref("");
 const erreur = ref("");
 const envoi = ref(false);
+const commandeExistante = ref(false);
 
 onMounted(async () => {
   try {
@@ -28,6 +29,7 @@ onMounted(async () => {
 
 async function valider() {
   erreur.value = "";
+  commandeExistante.value = false;
   if (mode.value === "livraison" && (!adresse.value.trim() || !commune.value)) {
     erreur.value = "Indiquez votre adresse et votre commune.";
     return;
@@ -55,7 +57,13 @@ async function valider() {
     }
   } catch (e) {
     const msg = (e.donnees && e.donnees.message) || "";
-    erreur.value = e.statut === 409 ? msg + ". Modifiez votre panier." : "Impossible de valider la commande.";
+    if (e.donnees && e.donnees.code === "COMMANDE_EXISTANTE") {
+      // La même commande attend déjà son paiement : on le dit au client au lieu d'en créer une deuxième
+      erreur.value = msg;
+      commandeExistante.value = true;
+    } else {
+      erreur.value = e.statut === 409 ? msg + ". Modifiez votre panier." : "Impossible de valider la commande.";
+    }
   } finally {
     envoi.value = false;
   }
@@ -84,7 +92,7 @@ async function valider() {
         <p class="info">{{ compte.prenom }} {{ compte.nom }} – {{ compte.email }}</p>
         <label for="tel">Téléphone de contact</label>
         <input id="tel" type="tel" v-model="telephone" />
-        <p v-if="erreur" class="erreur">{{ erreur }}</p>
+        <p v-if="erreur" class="erreur">{{ erreur }} <RouterLink v-if="commandeExistante" to="/mon-compte/commandes">Voir mes commandes</RouterLink></p>
         <button class="bouton" type="submit" :disabled="envoi">{{ envoi ? "Un instant..." : "Payer " + formaterPrix(totalPanier) }}</button>
       </form>
       <aside class="recap">

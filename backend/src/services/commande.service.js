@@ -42,6 +42,16 @@ async function creer(idUtilisateur, donnees) {
     total = Math.round(total * 100) / 100;
 
     const livraison = mode_reception === 'livraison';
+
+    // La même commande attend déjà son paiement (par exemple le client est revenu de Stripe sans payer) :
+    // on n'en crée pas une deuxième, on lui indique la première
+    const existante = await commandeModel.trouverEnAttenteIdentique(cx, idUtilisateur, {
+      modeReception: mode_reception,
+      adresseLivraison: livraison ? adresse_livraison : null,
+      communeLivraison: livraison ? commune_livraison : null,
+    }, quantites);
+    if (existante) return { success: false, error: 'COMMANDE_EXISTANTE', id: existante };
+
     const idCommande = await commandeModel.inserer(cx, {
       idUtilisateur,
       modeReception: mode_reception,

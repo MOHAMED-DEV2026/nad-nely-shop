@@ -20,6 +20,13 @@ async function creer(req, res, next) {
   try {
     const r = await commandeService.creer(req.user.id, req.body);
     if (r.error === 'PRODUIT_INDISPONIBLE') return res.status(409).json({ message: `Produit indisponible : ${r.nom}` });
+    if (r.error === 'COMMANDE_EXISTANTE') {
+      return res.status(409).json({
+        code: 'COMMANDE_EXISTANTE',
+        id_commande: r.id,
+        message: `Cette commande est déjà enregistrée (n° ${r.id}) et attend son paiement. Vous pouvez la payer depuis « Mes commandes ».`,
+      });
+    }
     if (r.error === 'STOCK_INSUFFISANT') return res.status(409).json({ message: `Stock insuffisant pour : ${r.nom}` });
     res.status(201).json(r.data);
   } catch (e) { next(e); }

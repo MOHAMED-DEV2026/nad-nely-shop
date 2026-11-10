@@ -24,6 +24,25 @@ async function inserer(cx, c) {
   return r.insertId;
 }
 
+// Cherche une commande « en attente » du même client, créée depuis moins de 24 h, avec la même réception
+// et exactement les mêmes produits et quantités. Renvoie son identifiant, ou null.
+// « quantites » est une Map : identifiant du produit -> quantité.
+async function trouverEnAttenteIdentique(cx, idUtilisateur, c, quantites) {
+  const [commandes] = await cx.query(
+    `SELECT id_commande FROM commande
+     WHERE id_utilisateur = ? AND statut = 'en_attente' AND date_commande >= NOW() - INTERVAL 1 DAY
+       AND mode_reception = ? AND adresse_livraison <=> ? AND commune_livraison <=> ?
+     ORDER BY id_commande DESC`,
+    [idUtilisateur, c.modeReception, c.adresseLivraison, c.communeLivraison]
+  );
+  for (const { id_commande: id } of commandes) {
+    const [lignes] = await cx.query('SELECT id_produit, quantite FROM ligne_commande WHERE id_commande = ?', [id]);
+    const memes = lignes.length === quantites.size && lignes.every((l) => quantites.get(l.id_produit) === l.quantite);
+    if (memes) return id;
+  }
+  return null;
+}
+
 // Le prix est figé au moment de l'achat
 async function insererLigne(cx, idCommande, idProduit, quantite, prixUnitaire) {
   await cx.query(
@@ -90,6 +109,6 @@ async function changerStatut(cx, id, statut) {
 
 module.exports = {
   verrouillerStatut, verrouillerLignesAvecStock, changerStatut,
-  verrouillerProduits, inserer, insererLigne, insererPaiement,
+  verrouillerProduits, trouverEnAttenteIdentique, inserer, insererLigne, insererPaiement,
   listerParUtilisateur, trouverParId, listerLignes, trouverPaiement,
 };
