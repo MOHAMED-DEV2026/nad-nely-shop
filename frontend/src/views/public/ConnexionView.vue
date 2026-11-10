@@ -8,7 +8,19 @@ const route = useRoute()
 const router = useRouter()
 const email = ref("")
 const motDePasse = ref("")
-const erreur = ref("")
+
+// Message laisse par le site quand la session a expire (voir services/api.js), affiche une seule fois
+function lireMessageSession() {
+  try {
+    const message = sessionStorage.getItem("messageConnexion") || ""
+    sessionStorage.removeItem("messageConnexion")
+    return message
+  } catch {
+    return ""
+  }
+}
+
+const erreur = ref(lireMessageSession())
 const envoi = ref(false)
 const lienInscription = { path: "/inscription", query: route.query }
 
@@ -49,7 +61,7 @@ async function seConnecter() {
         </div>
         <button type="submit" class="valider" :disabled="envoi">Se connecter</button>
         <p class="bas"><RouterLink to="/mot-de-passe-oublie">Mot de passe oublié ?</RouterLink></p>
-      <p class="bas">Pas encore de compte ? <RouterLink :to="lienInscription">Créer un compte</RouterLink></p>
+        <p class="bas">Pas encore de compte ? <RouterLink :to="lienInscription">Créer un compte</RouterLink></p>
       </form>
     </section>
   </main>
@@ -65,10 +77,9 @@ form { display: flex; flex-direction: column; gap: 16px; }
 .champ { display: flex; flex-direction: column; gap: 4px; }
 .champ label { font-size: 14px; font-weight: 500; }
 .champ input { min-height: var(--hauteur-champ); border: 1.5px solid var(--marine); border-radius: var(--arrondi-petit); padding: 0 14px; font-size: 16px; background: var(--creme); }
-.oublie { min-height: var(--hauteur-bouton); display: flex; align-items: center; font-size: 14px; color: var(--marine); font-weight: 500; text-decoration: underline; }
+.oublie { min-height: var(--hauteur-bouton); display: flex; align-items: center; font-size: 14px; color: var(--marine);font-weight: 500; text-decoration: underline; }
 .valider { min-height: 52px; border: 0; border-radius: var(--arrondi-petit); background: var(--marine); color: var(--blanc); font-weight: 600; font-size: 16px; }
 .valider:disabled { opacity: 0.6; cursor: wait; }
 .bas { margin: 0; text-align: center; font-size: 14px; }
 .bas a { color: var(--marine); font-weight: 600; text-decoration: underline; }
 </style>
-
