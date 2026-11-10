@@ -1,7 +1,8 @@
 const Stripe = require('stripe');
 
 // La clé secrète vient du fichier .env (jamais écrite dans le code). Mode test : elle commence par sk_test_
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+// Délai maximum de 10 secondes : si Stripe ne répond pas, on prévient vite le client au lieu de le faire attendre
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { timeout: 10000, maxNetworkRetries: 1 });
 
 // Crée une page de paiement Stripe Checkout pour une commande et renvoie la session (id et adresse) (BF18)
 // RG36 : le montant payé est égal au montant total de la commande (en centimes pour Stripe)

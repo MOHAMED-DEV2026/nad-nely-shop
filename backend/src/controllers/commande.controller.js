@@ -8,6 +8,11 @@ function repondreErreurCommande(res, r) {
   if (r.error === 'DEJA_TRAITEE') {
     return res.status(409).json({ message: 'Cette commande n’est plus en attente de paiement' });
   }
+  if (r.error === 'PAIEMENT_INDISPONIBLE') {
+    return res.status(503).json({
+      message: 'Le paiement est momentanément indisponible. Votre commande est enregistrée : vous pourrez la payer depuis « Mes commandes ».',
+    });
+  }
   return null;
 }
 

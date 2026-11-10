@@ -101,8 +101,14 @@ async function relancerPaiement(idUtilisateur, id) {
   const r = await trouverMaCommande(idUtilisateur, id);
   if (!r.success) return r;
   if (r.data.statut !== 'en_attente') return { success: false, error: 'DEJA_TRAITEE' };
-  const urlPaiement = await ouvrirPaiement(id, r.data.montant_total);
-  return { success: true, data: { id_commande: id, url_paiement: urlPaiement } };
+  try {
+    const urlPaiement = await ouvrirPaiement(id, r.data.montant_total);
+    return { success: true, data: { id_commande: id, url_paiement: urlPaiement } };
+  } catch (erreurStripe) {
+    // Stripe injoignable : la commande reste « en attente », le client pourra réessayer plus tard (RG41)
+    console.error('Session Stripe impossible :', erreurStripe.message);
+    return { success: false, error: 'PAIEMENT_INDISPONIBLE' };
+  }
 }
 
 module.exports = { creer, lister, detail, relancerPaiement };
