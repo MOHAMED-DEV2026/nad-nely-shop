@@ -12,7 +12,11 @@ async function confirmerCommande(idCommande, referenceStripe) {
   const resultat = await enTransaction(async (cx) => {
     // Si la page est rechargée, on ne confirme pas deux fois (stock décrémenté une seule fois)
     const statut = await commandeModel.verrouillerStatut(cx, idCommande);
-    if (statut !== 'en_attente') return { success: true, data: { id_commande: idCommande, statut } };
+    if (statut !== 'en_attente') {
+      // Commande annulée par l'administrateur pendant le paiement : la trace du paiement est gardée (remboursement manuel)
+      if (statut === 'annulee') await paiementModel.marquerValideTardif(cx, idCommande, referenceStripe);
+      return { success: true, data: { id_commande: idCommande, statut } };
+    }
 
     // Verrouille les produits et vérifie que le stock suffit encore (RG39)
     const lignes = await commandeModel.verrouillerLignesAvecStock(cx, idCommande);

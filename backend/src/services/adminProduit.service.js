@@ -59,7 +59,8 @@ async function creer(b, fichier) {
     const id = await produitModel.creer({ ...preparer(b, fichier), publicCible: b.public_cible || 'mixte' });
     return { success: true, data: { id_produit: id } };
   } catch (e) {
-    if (e.code === 'ER_NO_REFERENCED_ROW_2') return { success: false, error: 'CATEGORIE_INCONNUE' };
+    if (e.code === 'ER_NO_REFERENCED_ROW_2') return refuser(fichier, 'CATEGORIE_INCONNUE');
+    if (fichier) supprimerImage(fichier.filename);
     throw e;
   }
 }
@@ -68,16 +69,20 @@ async function creer(b, fichier) {
 async function modifier(id, b, fichier) {
   if (datesIncoherentes(b)) return refuser(fichier, 'DATES_INCOHERENTES');
   if (await photoDejaUtilisee(fichier, Number(id))) return refuser(fichier, 'PRODUIT_EXISTE');
+  const ancien = fichier ? await produitModel.trouverParId(id) : null;
   try {
     const touchees = await produitModel.modifier(id, {
       ...preparer(b, fichier),
       publicCible: b.public_cible || null,
       actif: b.actif === undefined ? null : b.actif,
     });
-    if (touchees === 0) return { success: false, error: 'PRODUIT_INTROUVABLE' };
+    if (touchees === 0) return refuser(fichier, 'PRODUIT_INTROUVABLE');
+    // La nouvelle photo remplace l'ancienne : l'ancien fichier est supprimé du disque
+    if (ancien && ancien.image) supprimerImage(ancien.image);
     return { success: true };
   } catch (e) {
-    if (e.code === 'ER_NO_REFERENCED_ROW_2') return { success: false, error: 'CATEGORIE_INCONNUE' };
+    if (e.code === 'ER_NO_REFERENCED_ROW_2') return refuser(fichier, 'CATEGORIE_INCONNUE');
+    if (fichier) supprimerImage(fichier.filename);
     throw e;
   }
 }

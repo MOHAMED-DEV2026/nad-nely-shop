@@ -1,10 +1,9 @@
 const Stripe = require('stripe');
-const db = require('./db');
 
 // La clé secrète vient du fichier .env (jamais écrite dans le code). Mode test : elle commence par sk_test_
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// Crée une page de paiement Stripe Checkout pour une commande et renvoie son adresse (BF18)
+// Crée une page de paiement Stripe Checkout pour une commande et renvoie la session (id et adresse) (BF18)
 // RG36 : le montant payé est égal au montant total de la commande (en centimes pour Stripe)
 // RG40 : aucune donnée bancaire n'est stockée, seule la référence de la session Stripe est enregistrée
 async function creerSessionPaiement(idCommande, montant) {
@@ -23,10 +22,7 @@ async function creerSessionPaiement(idCommande, montant) {
     success_url: `${process.env.FRONT_URL}/paiement/succes?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.FRONT_URL}/paiement/annule?commande=${idCommande}`,
   });
-
-  // RG35 : un seul paiement par commande, mis à jour à chaque nouvelle tentative
-  await db.query('UPDATE paiement SET reference_transaction = ? WHERE id_commande = ?', [session.id, idCommande]);
-  return session.url;
+  return session;
 }
 
 module.exports = { stripe, creerSessionPaiement };

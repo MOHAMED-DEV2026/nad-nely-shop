@@ -7,6 +7,8 @@ const { validerProduit, validerCategorie, validerAction } = require('../middlewa
 const produits = require('../controllers/adminProduit.controller');
 const categories = require('../controllers/adminCategorie.controller');
 const commandes = require('../controllers/adminCommande.controller');
+const utilisateurs = require('../controllers/adminUtilisateur.controller');
+const tableauDeBord = require('../controllers/adminTableauDeBord.controller');
 
 router.use(exigerConnexion, exigerAdmin);
 
@@ -27,5 +29,11 @@ router.delete('/categories/:id', validateId, categories.supprimer);
 router.get('/commandes', commandes.lister);
 router.get('/commandes/:id', validateId, commandes.obtenir);
 router.patch('/commandes/:id/statut', validateId, validerAction, commandes.changerStatut);
+
+// Clients inscrits, en consultation seule (BF24)
+router.get('/utilisateurs', utilisateurs.lister);
+
+// Tableau de bord (BF25)
+router.get('/tableau-de-bord', tableauDeBord.indicateurs);
 
 module.exports = router;

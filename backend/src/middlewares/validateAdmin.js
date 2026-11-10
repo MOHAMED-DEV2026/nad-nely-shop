@@ -1,6 +1,17 @@
 // Règles de validation des formulaires de l'administration (produits et catégories).
 const { body } = require('express-validator');
-const validation = require('./validation');
+const { validationResult } = require('express-validator');
+const { supprimerImage } = require('../utils/fichiers');
+
+// Comme « validation », mais si le formulaire est refusé, la photo déjà enregistrée par multer est supprimée
+function validation(req, res, next) {
+  const erreurs = validationResult(req);
+  if (!erreurs.isEmpty()) {
+    if (req.file) supprimerImage(req.file.filename);
+    return res.status(400).json({ erreurs: erreurs.array() });
+  }
+  next();
+}
 
 // À placer après l'envoi de l'image (multer), car le formulaire produit est envoyé en multipart
 const validerProduit = [
@@ -14,6 +25,7 @@ const validerProduit = [
   body('public_cible').optional({ values: 'falsy' }).isIn(['femme', 'homme', 'mixte']),
   body('date_fabrication').optional({ values: 'falsy' }).isISO8601(),
   body('date_expiration').optional({ values: 'falsy' }).isISO8601(),
+  body('actif').optional({ values: 'falsy' }).isBoolean().withMessage('Valeur invalide pour actif'),
   validation,
 ];
 

@@ -1,9 +1,17 @@
 // Service « commande » (côté client) : création, historique, détail, relance du paiement.
 // Il ne connaît ni req ni res. Chaque fonction renvoie { success, error, data }.
 const commandeModel = require('../models/commande.model');
+const paiementModel = require('../models/paiement.model');
 const { enTransaction } = require('../models/transaction');
 const { creerSessionPaiement } = require('../config/stripe');
 const { statutAffiche } = require('../utils/statuts');
+
+// Ouvre la page de paiement Stripe et garde la référence de la session pour la commande
+async function ouvrirPaiement(idCommande, montant) {
+  const session = await creerSessionPaiement(idCommande, montant);
+  await paiementModel.enregistrerReference(idCommande, session.id);
+  return session.url;
+}
 
 // BF17 : crée une commande « en attente » avec son paiement « en attente ».
 // RG19 : le prix et le total viennent toujours de la base, jamais du navigateur.
@@ -55,7 +63,7 @@ async function creer(idUtilisateur, donnees) {
   const { idCommande, total } = resultat.data;
   let urlPaiement = null;
   try {
-    urlPaiement = await creerSessionPaiement(idCommande, total);
+    urlPaiement = await ouvrirPaiement(idCommande, total);
   } catch (erreurStripe) {
     console.error('Session Stripe impossible :', erreurStripe.message);
   }
@@ -93,7 +101,7 @@ async function relancerPaiement(idUtilisateur, id) {
   const r = await trouverMaCommande(idUtilisateur, id);
   if (!r.success) return r;
   if (r.data.statut !== 'en_attente') return { success: false, error: 'DEJA_TRAITEE' };
-  const urlPaiement = await creerSessionPaiement(id, r.data.montant_total);
+  const urlPaiement = await ouvrirPaiement(id, r.data.montant_total);
   return { success: true, data: { id_commande: id, url_paiement: urlPaiement } };
 }
 

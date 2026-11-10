@@ -64,7 +64,35 @@ async function reinitialiserMotDePasse(id, motDePasseHache) {
   );
 }
 
+// Administration (BF24) : une page de clients, avec le nombre total et le nombre de commandes de chacun.
+// RG04 : seuls les comptes de rôle « client » apparaissent.
+// RG03 : on ne sélectionne jamais le mot de passe ni le code de réinitialisation.
+async function chercherClients(recherche, page, parPage) {
+  const conditions = ["u.role = 'client'"];
+  const valeurs = [];
+  if (recherche) {
+    conditions.push('(u.nom LIKE ? OR u.prenom LIKE ? OR u.email LIKE ?)');
+    const motif = `%${recherche}%`;
+    valeurs.push(motif, motif, motif);
+  }
+  const where = conditions.join(' AND ');
+
+  const [[{ total }]] = await db.query(`SELECT COUNT(*) AS total FROM utilisateur u WHERE ${where}`, valeurs);
+  const [clients] = await db.query(
+    `SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone, u.date_inscription,
+            COUNT(c.id_commande) AS nb_commandes
+     FROM utilisateur u
+     LEFT JOIN commande c ON c.id_utilisateur = u.id_utilisateur
+     WHERE ${where}
+     GROUP BY u.id_utilisateur
+     ORDER BY u.date_inscription DESC, u.id_utilisateur DESC
+     LIMIT ? OFFSET ?`,
+    [...valeurs, parPage, (page - 1) * parPage]
+  );
+  return { total, clients };
+}
+
 module.exports = {
-  trouverParEmail, trouverProfilParId, trouverMotDePasseParId, creer,
+  chercherClients, trouverParEmail, trouverProfilParId, trouverMotDePasseParId, creer,
   modifierProfil, modifierMotDePasse, enregistrerCode, dateEstFuture, reinitialiserMotDePasse,
 };

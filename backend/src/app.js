@@ -25,8 +25,6 @@ app.use('/api', require('./routes/catalogue.routes'));
 app.use('/api/commandes', require('./routes/commande.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));
 app.use('/api/paiements', require('./routes/paiement.routes'));
-app.use('/api/admin/tableau-de-bord', require('./routes/admin-tableau-de-bord'));
-app.use('/api/admin/utilisateurs', require('./routes/admin-utilisateurs'));
 app.use('/api/compte', require('./routes/compte.routes'));
 
 // Images des produits (fichiers du dossier uploads)
