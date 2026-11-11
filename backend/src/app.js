@@ -17,9 +17,13 @@ app.use(express.json());
 app.use(requestLogger);
 
 // Limite les tentatives sur l'inscription et la connexion (protection contre le piratage par essais)
-const limiteAuth = rateLimit({ windowMs: 15 * 60 * 1000, max: 30 });
+const MESSAGE_TROP_DE_TENTATIVES = { message: 'Trop de tentatives, réessayez dans quelques minutes' };
+const limiteAuth = rateLimit({ windowMs: 15 * 60 * 1000, max: 30, message: MESSAGE_TROP_DE_TENTATIVES });
+// BNF08 : 5 connexions ratées maximum par 15 minutes et par adresse IP (les connexions réussies ne comptent pas)
+const limiteConnexion = rateLimit({ windowMs: 15 * 60 * 1000, max: 5, skipSuccessfulRequests: true, message: MESSAGE_TROP_DE_TENTATIVES });
 
 app.get('/api/sante', (req, res) => res.json({ ok: true }));
+app.use('/api/auth/connexion', limiteConnexion);
 app.use('/api/auth', limiteAuth, require('./routes/auth.routes'));
 app.use('/api', require('./routes/catalogue.routes'));
 app.use('/api/commandes', require('./routes/commande.routes'));

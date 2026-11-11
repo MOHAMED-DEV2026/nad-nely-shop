@@ -1,4 +1,4 @@
-// Routes d'authentification (publiques). Le contrôle des tentatives est fait dans app.js.
+// Routes d'authentification (publiques). La limite des tentatives (BNF08) est réglée dans app.js.
 const router = require('express').Router();
 const v = require('../middlewares/validateAuth');
 const auth = require('../controllers/auth.controller');
