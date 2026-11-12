@@ -89,7 +89,7 @@ function vider() {
 .lignes { flex: 2 1 560px; min-width: 0; background: var(--blanc); border: 1px solid var(--bordure); border-radius: var(--arrondi-moyen); padding: 8px 24px; }
 .tableau-defilant { overflow-x: auto; }
 table { width: 100%; min-width: 560px; border-collapse: collapse; text-align: left; }
-th { padding: 12px 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--texte-doux); border-bottom: 2px solid var(--marine); }
+th { padding: 12px 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color:var(--texte-doux); border-bottom: 2px solid var(--marine); }
 td { padding: 16px 8px; border-bottom: 1px solid var(--bordure); vertical-align: middle; }
 .produit { display: flex; align-items: center; gap: 12px; }
 .vignette { width: 72px; height: 72px; flex: 0 0 72px; border-radius: 12px; background: var(--rose); overflow: hidden; }
@@ -98,7 +98,7 @@ td { padding: 16px 8px; border-bottom: 1px solid var(--bordure); vertical-align:
 .nom:hover { text-decoration: underline; }
 .cat { font-size: 12px; color: #555555; }
 .sous { font-weight: 600; color: var(--marine); }
-.supprimer { min-height: var(--hauteur-bouton); padding: 0 12px; border: 1.5px solid var(--rouge); border-radius: var(--arrondi-petit); background: var(--blanc); color: var(--rouge); font-size: 14px; font-weight: 500; }
+.supprimer { min-height: var(--hauteur-bouton); padding: 0 12px; border: 1.5px solid var(--rouge); border-radius:var(--arrondi-petit); background: var(--blanc); color: var(--rouge); font-size: 14px; font-weight: 500; }
 .pied-liste { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 8px; }
 .continuer { min-height: var(--hauteur-bouton); display: flex; align-items: center; color: var(--marine); font-weight: 600; text-decoration: underline; }
 .confirmation { margin: 0 8px 16px; padding: 16px; border: 1px solid var(--bordure); border-radius: var(--arrondi-moyen); background: var(--creme); }
@@ -112,7 +112,21 @@ td { padding: 16px 8px; border-bottom: 1px solid var(--bordure); vertical-align:
 .total { border-top: 2px solid var(--marine); padding-top: 12px; font-weight: 700; font-size: 20px; color: var(--marine); }
 .commander { min-height: 52px; display: flex; align-items: center; justify-content: center; background: var(--marine); color: var(--blanc); border-radius: var(--arrondi-petit); font-weight: 600; }
 .note { margin: 0; font-size: 12px; color: var(--texte-doux); }
-.vide { background: var(--blanc); border: 1px dashed var(--marine); border-radius: var(--arrondi-moyen); padding: 32px; text-align: center; }
+.vide { background: var(--blanc); border: 1px dashed var(--marine); border-radius: var(--arrondi-moyen); padding:32px; text-align: center; }
 .vide p { margin: 0 0 16px; font-size: 18px; }
 .cache { position: absolute; left: -9999px; }
+
+/* Téléphone : chaque produit devient une carte (plus de tableau à faire défiler de côté) */
+@media (max-width: 640px) {
+  .page { padding: 16px; }
+  .lignes { padding: 8px 12px; }
+  table { min-width: 0; }
+  thead { position: absolute; left: -9999px; }
+  table, tbody { display: block; }
+  tr { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--bordure); }
+  td { display: block; padding: 0; border: 0; }
+  tr td:nth-child(1) { grid-column: 1 / -1; }
+  tr td:nth-child(3), tr td:nth-child(5) { justify-self: end; }
+  .sous { font-size: 18px; }
+}
 </style>
