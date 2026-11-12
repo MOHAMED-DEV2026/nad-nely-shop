@@ -14,11 +14,14 @@ const ANNULABLES = ['en_attente', 'confirmee', 'expediee'];
 const STOCK_DECREMENTE = ['confirmee', 'expediee'];
 
 // BF21 : liste filtrée (statut, dates, client), 20 commandes par page
+// Dates de filtre au format AAAA-MM-JJ, sinon ignorées
+const DATE_VALIDE = /^\d{4}-\d{2}-\d{2}$/;
+
 async function lister(query) {
   const filtres = {
     statut: query.statut && LIBELLES[query.statut] ? query.statut : null,
-    du: query.du || null,
-    au: query.au || null,
+    du: DATE_VALIDE.test(query.du || '') ? query.du : null,
+    au: DATE_VALIDE.test(query.au || '') ? query.au : null,
     client: query.client || null,
   };
   const page = Math.max(1, Number(query.page) || 1);

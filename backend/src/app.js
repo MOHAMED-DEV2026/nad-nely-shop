@@ -9,11 +9,13 @@ const rateLimit = require('express-rate-limit');
 const requestLogger = require('./middlewares/requestLogger');
 const notFound = require('./middlewares/notFound');
 const errorHandler = require('./middlewares/errorHandler');
+const requeteSimple = require('./middlewares/requeteSimple');
 
 const app = express();
 
 app.use(cors({ origin: process.env.FRONT_URL }));
 app.use(express.json());
+app.use(requeteSimple);
 app.use(requestLogger);
 
 // Limite les tentatives sur l'inscription et la connexion (protection contre le piratage par essais)

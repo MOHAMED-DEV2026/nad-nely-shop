@@ -1,30 +1,53 @@
 # NAD-NELY Shop
 
-Site e-commerce (vêtements, chaussures, sacs, parfums, cosmétiques, beauté) - Mamoudzou, Mayotte.
-Projet de fin de formation DWWM 2026 - SAID ATTOUMANE Mohamed.
+Boutique en ligne basée à Mamoudzou (Mayotte) : vêtements, chaussures, sacs, parfums et cosmétiques.
+Projet de fin de formation Développeur Web & Web Mobile (promotion 2026, Aloalo Mayotte Compétences).
 
-## Structure
+## Technologies
 
-- `database/` : `schema.sql` (6 tables) et `seed.sql` (données d'exemple)
-- `backend/`  : API REST Node.js / Express (phase 6)
-- `frontend/` : application Vue.js 3 + Vite (phase 7)
+- Frontend : Vue 3 + Vite
+- Backend : Node.js + Express 5 (API REST)
+- Base de données : MySQL / MariaDB
+- Paiement : Stripe Checkout (mode test) — E-mails de test : Mailtrap
 
-## Phase 5 - Créer la base de données
-
-1. Installer MySQL ou MariaDB, puis DBeaver.
-2. Dans un terminal, depuis ce dossier :
+## Organisation du dépôt
 
 ```
-mysql -u root -p < database/schema.sql
-mysql -u root -p < database/seed.sql
+backend/    API : routes → middlewares → controllers → services → models
+database/   schema.sql (tables) et seed.sql (catégories de départ)
+frontend/   Application Vue (pages publiques et espace administrateur)
 ```
 
-3. Dans DBeaver, ouvrir la base `nad_nely_shop` : 6 tables, 6 catégories, 8 produits d'exemple.
+## Installation
 
-## Git
+Prérequis : Node.js 20 ou plus, MySQL ou MariaDB.
+
+1. **Base de données** (depuis le dossier du projet) :
+   ```
+   mysql -u root -p --default-character-set=utf8mb4 -e "source database/schema.sql"
+   mysql -u root -p --default-character-set=utf8mb4 -e "source database/seed.sql"
+   ```
+2. **Backend** :
+   ```
+   cd backend
+   npm install
+   ```
+   Copier `.env.example` en `.env`, puis remplir les valeurs (base, `JWT_SECRET`, clé Stripe de test, Mailtrap).
+   Créer le compte administrateur : `npm run creer-admin`
+3. **Frontend** :
+   ```
+   cd frontend
+   npm install
+   ```
+   Copier `.env.example` en `.env` (adresse de l'API).
+
+## Lancement
+
+Deux terminaux :
 
 ```
-git init
-git add .
-git commit -m "Phase 5 : base de données"
+cd backend  && npm run dev     # API sur http://localhost:3000
+cd frontend && npm run dev     # site sur http://localhost:5173
 ```
+
+Paiement de test Stripe : carte `4242 4242 4242 4242`, date future, code `123`.

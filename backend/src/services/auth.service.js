@@ -17,7 +17,14 @@ async function inscrire({ nom, prenom, email, telephone, mot_de_passe }) {
 
   // RG03 : le mot de passe est haché, jamais stocké en clair
   const motDePasseHache = await bcrypt.hash(mot_de_passe, 10);
-  const id = await utilisateurModel.creer({ nom, prenom, email, telephone, motDePasseHache });
+  let id;
+  try {
+    id = await utilisateurModel.creer({ nom, prenom, email, telephone, motDePasseHache });
+  } catch (e) {
+    // Deux inscriptions simultanées avec le même e-mail : la base refuse la seconde
+    if (e.code === 'ER_DUP_ENTRY') return { success: false, error: 'EMAIL_DEJA_UTILISE' };
+    throw e;
+  }
   return {
     success: true,
     data: { token: creerJeton(id, 'client'), utilisateur: { id, nom, prenom, role: 'client' } },
