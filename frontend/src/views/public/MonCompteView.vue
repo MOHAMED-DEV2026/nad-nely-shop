@@ -2,6 +2,7 @@
 import { reactive, ref, onMounted } from "vue";
 import { appelerApi } from "../../services/api.js";
 import NavCompte from "../../components/NavCompte.vue";
+import ChampMotDePasse from "../../components/ChampMotDePasse.vue";
 
 const infos = reactive({ nom: "", prenom: "", telephone: "", email: "" });
 const messageInfos = ref("");
@@ -80,12 +81,12 @@ async function changerMotDePasse() {
       <form class="carte" @submit.prevent="changerMotDePasse">
         <h2>Changer mon mot de passe</h2>
         <label for="ancien">Ancien mot de passe</label>
-        <input id="ancien" type="password" v-model="mdp.ancien" />
+        <ChampMotDePasse id="ancien" v-model="mdp.ancien" autocomplete="current-password" />
         <label for="nouveau">Nouveau mot de passe</label>
-        <input id="nouveau" type="password" v-model="mdp.nouveau" />
+        <ChampMotDePasse id="nouveau" v-model="mdp.nouveau" autocomplete="new-password" />
         <p class="aide">Au moins 8 caractères, dont une majuscule, une minuscule et un chiffre.</p>
         <label for="conf">Confirmation</label>
-        <input id="conf" type="password" v-model="mdp.confirmation" />
+        <ChampMotDePasse id="conf" v-model="mdp.confirmation" autocomplete="new-password" />
         <button class="bouton" type="submit">Changer le mot de passe</button>
         <p v-if="messageMdp" class="succes">{{ messageMdp }}</p>
         <p v-if="erreurMdp" class="erreur">{{ erreurMdp }}</p>

@@ -3,6 +3,7 @@ import { ref, reactive } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { appelerApi } from "../../services/api"
 import { auth } from "../../stores/auth"
+import ChampMotDePasse from "../../components/ChampMotDePasse.vue"
 
 const route = useRoute()
 const router = useRouter()
@@ -87,13 +88,13 @@ async function sInscrire() {
         </div>
         <div class="champ">
           <label for="mdp">Mot de passe *</label>
-          <input id="mdp" v-model="champs.motDePasse" type="password" autocomplete="new-password" :class="{ invalide: erreurs.motDePasse }" />
+          <ChampMotDePasse id="mdp" v-model="champs.motDePasse" autocomplete="new-password" :class="{ invalide: erreurs.motDePasse }" />
           <span v-if="erreurs.motDePasse" class="erreur">{{ erreurs.motDePasse }}</span>
           <span v-else class="aide">Au moins 8 caractères, dont une majuscule, une minuscule et un chiffre.</span>
         </div>
         <div class="champ">
           <label for="mdp2">Confirmation du mot de passe *</label>
-          <input id="mdp2" v-model="champs.confirmation" type="password" autocomplete="new-password" :class="{ invalide: erreurs.confirmation }" />
+          <ChampMotDePasse id="mdp2" v-model="champs.confirmation" autocomplete="new-password" :class="{ invalide: erreurs.confirmation }" />
           <span v-if="erreurs.confirmation" class="erreur">{{ erreurs.confirmation }}</span>
         </div>
         <div class="champ">
@@ -122,7 +123,7 @@ form { display: flex; flex-direction: column; gap: 16px; }
 .champ { display: flex; flex-direction: column; gap: 4px; }
 .champ label { font-size: 14px; font-weight: 500; }
 .champ input[type="text"], .champ input[type="email"], .champ input[type="tel"], .champ input[type="password"] { min-height: var(--hauteur-champ); border: 1.5px solid var(--marine); border-radius: var(--arrondi-petit); padding: 0 14px; font-size: 16px; background: var(--creme); }
-.champ input.invalide { border-color: var(--rouge); }
+.champ input.invalide, .champ :deep(input.invalide) { border-color: var(--rouge); }
 .erreur { color: var(--rouge); font-size: 13px; font-weight: 500; }
 .aide { color: var(--texte-doux); font-size: 13px; }
 .accord { display: flex; align-items: flex-start; gap: 12px; }

@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { appelerApi } from "../../services/api.js";
+import ChampMotDePasse from "../../components/ChampMotDePasse.vue";
 
 const etape = ref(1);
 const email = ref("");
@@ -68,9 +69,9 @@ async function reinitialiser() {
       <input id="code" class="code" type="text" inputmode="numeric" maxlength="6" v-model="code" />
       <p class="aide">Le code est valable 15 minutes et ne sert qu'une fois.</p>
       <label for="nouveau">Nouveau mot de passe</label>
-      <input id="nouveau" type="password" v-model="nouveau" />
+      <ChampMotDePasse id="nouveau" v-model="nouveau" autocomplete="new-password" />
       <label for="conf">Confirmation</label>
-      <input id="conf" type="password" v-model="confirmation" />
+      <ChampMotDePasse id="conf" v-model="confirmation" autocomplete="new-password" />
       <p class="aide">Au moins 8 caractères, dont une majuscule, une minuscule et un chiffre.</p>
       <p v-if="erreur" class="erreur">{{ erreur }}</p>
       <button class="bouton" type="submit" :disabled="envoi">Enregistrer</button>

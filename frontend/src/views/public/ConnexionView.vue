@@ -3,6 +3,7 @@ import { ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { appelerApi } from "../../services/api"
 import { auth } from "../../stores/auth"
+import ChampMotDePasse from "../../components/ChampMotDePasse.vue"
 
 const route = useRoute()
 const router = useRouter()
@@ -57,7 +58,7 @@ async function seConnecter() {
         </div>
         <div class="champ">
           <label for="mdp">Mot de passe</label>
-          <input id="mdp" v-model="motDePasse" type="password" required autocomplete="current-password" />
+          <ChampMotDePasse id="mdp" v-model="motDePasse" required autocomplete="current-password" />
         </div>
         <button type="submit" class="valider" :disabled="envoi">Se connecter</button>
         <p class="bas"><RouterLink to="/mot-de-passe-oublie">Mot de passe oublié ?</RouterLink></p>
