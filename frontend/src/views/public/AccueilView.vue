@@ -2,8 +2,8 @@
 import { ref, onMounted } from "vue";
 import { appelerApi } from "../../services/api.js";
 import CarteProduit from "../../components/CarteProduit.vue";
-// Photo du hero : pour en changer, remplacer hero1.jpg par hero2.jpg ou hero3.jpg
-import photoHero from "../../assets/hero2.jpg";
+// Photo du hero : pour en changer, remplacer le fichier hero1.jpg du dossier assets
+import photoHero from "../../assets/hero1.jpg";
 
 const categories = ref([]);
 const nouveautes = ref([]);
@@ -93,5 +93,11 @@ onMounted(async () => {
 .garanties h3 { margin: 0 0 4px; font-size: 18px; }
 .garanties p { margin: 0; font-size: 14px; color: var(--texte-doux); }
 @media (min-width: 768px) { .hero { min-height: 480px; background: linear-gradient(90deg, rgba(27, 42, 74, 0.85) 0%, rgba(27, 42, 74, 0.6) 55%, rgba(27, 42, 74, 0.2) 100%), var(--photo) center 10% / cover no-repeat; } .hero h1 { font-size: 44px; } .interieur { padding: 64px 32px; } .categories { grid-template-columns: repeat(3, 1fr); } .produits { grid-template-columns: repeat(3, 1fr); gap: 24px; } .garanties { grid-template-columns: repeat(3, 1fr); padding: 32px; } }
-@media (min-width: 1024px) { .hero { min-height: 540px; } .hero h1 { font-size: 52px; } .categories { grid-template-columns: repeat(6, 1fr); } }
+/* Grand écran : la photo entière (format 16/9) est placée à droite et se fond dans le bleu marine à gauche, là où se trouve le texte */
+@media (min-width: 1024px) {
+  .hero { min-height: min(560px, 56vw); background: #1B2A4A; position: relative; isolation: isolate; overflow: hidden; }
+  .hero::before { content: ""; position: absolute; top: 0; right: 0; bottom: 0; aspect-ratio: 16 / 9; z-index: -2; background: var(--photo) right top / cover no-repeat; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 35%); mask-image: linear-gradient(90deg, transparent 0, #000 35%); }
+  .hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(27, 42, 74, 0.75) 0%, rgba(27, 42, 74, 0.4) 50%, rgba(27, 42, 74, 0) 80%); }
+}
+@media (min-width: 1024px) { .hero h1 { font-size: 52px; } .categories { grid-template-columns: repeat(6, 1fr); } }
 </style>
