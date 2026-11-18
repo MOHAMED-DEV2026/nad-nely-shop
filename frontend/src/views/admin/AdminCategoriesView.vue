@@ -18,6 +18,7 @@ const fichier = ref(null)
 const apercu = ref("")
 const imageActuelle = ref("")
 const retirerImage = ref(false)
+const erreurPhoto = ref("")
 
 // Oublie la photo choisie ; « viderChamp » efface aussi le champ fichier (pas au moment où on vient de choisir)
 function viderPhoto(viderChamp = true) {
@@ -27,20 +28,20 @@ function viderPhoto(viderChamp = true) {
   if (viderChamp && champFichier.value) champFichier.value.value = ""
 }
 
-// Mêmes règles que le serveur : JPG, PNG ou WEBP, 2 Mo maximum
+// Mêmes règles que le serveur : JPG, PNG ou WEBP, 5 Mo maximum
 function choisirFichier(evenement) {
-  erreurForm.value = ""
+  erreurPhoto.value = ""
   // On lit le fichier AVANT tout, puis on oublie l'ancien aperçu sans vider le champ
   const f = evenement.target.files[0]
   viderPhoto(false)
   if (!f) return
   if (!["image/jpeg", "image/png", "image/webp"].includes(f.type)) {
-    erreurForm.value = "Photo : formats acceptés JPG, PNG ou WEBP"
+    erreurPhoto.value = "Photo : formats acceptés JPG, PNG ou WEBP"
     evenement.target.value = ""
     return
   }
-  if (f.size > 2 * 1024 * 1024) {
-    erreurForm.value = "Photo trop lourde : 2 Mo maximum"
+  if (f.size > 5 * 1024 * 1024) {
+    erreurPhoto.value = "Photo trop lourde : 5 Mo maximum"
     evenement.target.value = ""
     return
   }
@@ -67,6 +68,7 @@ function modifier(c) {
   imageActuelle.value = c.image || ""
   retirerImage.value = false
   viderPhoto()
+  erreurPhoto.value = ""
   erreurForm.value = ""
   message.value = ""
   alerte.value = ""
@@ -79,6 +81,7 @@ function annulerFormulaire() {
   imageActuelle.value = ""
   retirerImage.value = false
   viderPhoto()
+  erreurPhoto.value = ""
   erreurForm.value = ""
 }
 
@@ -168,7 +171,8 @@ async function confirmerSuppression() {
           <div class="champ">
             <label for="photo">Photo (facultative)</label>
             <input id="photo" ref="champFichier" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="photo-aide" @change="choisirFichier" />
-            <p id="photo-aide" class="aide">JPG, PNG ou WEBP, 2 Mo maximum. Affichée sur la tuile de la page d'accueil.</p>
+            <p id="photo-aide" class="aide">JPG, PNG ou WEBP, 5 Mo maximum. Affichée sur la tuile de la page d'accueil.</p>
+            <p v-if="erreurPhoto" class="erreur" role="alert">{{ erreurPhoto }}</p>
             <div v-if="apercu || (imageActuelle && !retirerImage)" class="apercu">
               <img :src="apercu || urlImage(imageActuelle)" :alt="apercu ? 'Aperçu de la nouvelle photo' : 'Photo actuelle'" />
               <span>{{ apercu ? "Nouvelle photo" : "Photo actuelle" }}</span>

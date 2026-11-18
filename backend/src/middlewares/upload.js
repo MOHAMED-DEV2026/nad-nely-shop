@@ -1,4 +1,4 @@
-// Envoi d'image (produit ou catégorie) : JPG, PNG ou WEBP, 2 Mo maximum
+// Envoi d'image (produit ou catégorie) : JPG, PNG ou WEBP, 5 Mo maximum
 const multer = require('multer');
 const path = require('path');
 const crypto = require('crypto');
@@ -16,7 +16,7 @@ const stockage = multer.diskStorage({
 
 const upload = multer({
   storage: stockage,
-  limits: { fileSize: 2 * 1024 * 1024 },
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const ok = Object.keys(EXTENSIONS).includes(file.mimetype);
     cb(ok ? null : new Error('FORMAT_IMAGE'), ok);

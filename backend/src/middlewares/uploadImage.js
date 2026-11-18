@@ -6,7 +6,7 @@ function envoyerImage(req, res, next) {
     if (!err) return next();
     const message = err.message === 'FORMAT_IMAGE'
       ? 'Image : formats acceptés JPG, PNG ou WEBP'
-      : 'Image : 2 Mo maximum';
+      : 'Image : 5 Mo maximum';
     res.status(400).json({ message });
   });
 }

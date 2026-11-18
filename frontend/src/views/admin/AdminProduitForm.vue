@@ -55,7 +55,7 @@ function choisirFichier(evenement) {
     return
   }
   if (!["image/jpeg", "image/png", "image/webp"].includes(f.type)) return refuserImage(evenement, "Formats acceptés : JPG, PNG ou WEBP")
-  if (f.size > 2 * 1024 * 1024) return refuserImage(evenement, "Image trop lourde : 2 Mo maximum")
+  if (f.size > 5 * 1024 * 1024) return refuserImage(evenement, "Image trop lourde : 5 Mo maximum")
   fichier.value = f
   apercu.value = URL.createObjectURL(f)
 }
@@ -174,7 +174,7 @@ async function envoyer() {
         </div>
       </div>
       <div class="champ">
-        <label for="image">Photo du produit (JPG, PNG ou WEBP, 2 Mo maximum)</label>
+        <label for="image">Photo du produit (JPG, PNG ou WEBP, 5 Mo maximum)</label>
         <div class="image-zone">
           <img v-if="apercu" :src="apercu" alt="Aperçu" class="vignette" />
           <img v-else-if="imageActuelle" :src="urlImage(imageActuelle)" alt="Photo actuelle" class="vignette" />
