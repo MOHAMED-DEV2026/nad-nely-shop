@@ -19,18 +19,20 @@ const apercu = ref("")
 const imageActuelle = ref("")
 const retirerImage = ref(false)
 
-function viderPhoto() {
+// Oublie la photo choisie ; « viderChamp » efface aussi le champ fichier (pas au moment où on vient de choisir)
+function viderPhoto(viderChamp = true) {
   if (apercu.value) URL.revokeObjectURL(apercu.value)
   fichier.value = null
   apercu.value = ""
-  if (champFichier.value) champFichier.value.value = ""
+  if (viderChamp && champFichier.value) champFichier.value.value = ""
 }
 
 // Mêmes règles que le serveur : JPG, PNG ou WEBP, 2 Mo maximum
 function choisirFichier(evenement) {
   erreurForm.value = ""
-  viderPhoto()
+  // On lit le fichier AVANT tout, puis on oublie l'ancien aperçu sans vider le champ
   const f = evenement.target.files[0]
+  viderPhoto(false)
   if (!f) return
   if (!["image/jpeg", "image/png", "image/webp"].includes(f.type)) {
     erreurForm.value = "Photo : formats acceptés JPG, PNG ou WEBP"
