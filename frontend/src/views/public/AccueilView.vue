@@ -131,6 +131,8 @@ onMounted(async () => {
 .garantie h3 { margin: 0 0 6px; font-size: 18px; }
 .garantie p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--texte-doux); }
 @media (prefers-reduced-motion: reduce) { .garantie, .garantie:hover { transition: none; transform: none; } }
+/* Téléphone uniquement : le couple est sur la moitié droite de la photo, on cadre donc à droite pour qu'il apparaisse en entier */
+@media (max-width: 767px) { .hero { background-position: center, 95% 10%; } }
 @media (min-width: 768px) { .hero { min-height: 480px; background: linear-gradient(90deg, rgba(27, 42, 74, 0.85) 0%, rgba(27, 42, 74, 0.6) 55%, rgba(27, 42, 74, 0.2) 100%), var(--photo) center 10% / cover no-repeat; } .hero h1 { font-size: 44px; } .interieur { padding: 64px 32px; } .categories { grid-template-columns: repeat(3, 1fr); } .produits { grid-template-columns: repeat(3, 1fr); gap: 24px; } .garanties { grid-template-columns: repeat(3, 1fr); gap: 24px; } .garantie { flex-direction: column; padding: 28px; } }
 /* Grand écran : la photo entière (format 16/9) est placée à droite et se fond dans le bleu marine à gauche, là où se trouve le texte */
 @media (min-width: 1024px) {
