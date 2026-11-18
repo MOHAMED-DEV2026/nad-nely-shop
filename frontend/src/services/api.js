@@ -1,4 +1,4 @@
-import { auth } from "../stores/auth"
+import { auth, lireJeton } from "../stores/auth"
 
 const URL_API = import.meta.env.VITE_API_URL
 
@@ -17,7 +17,7 @@ function sessionExpiree() {
 
 // Fonction unique pour parler a l API (ajoute le jeton de connexion si le client est connecte)
 export async function appelerApi(chemin, options = {}) {
-  const jeton = localStorage.getItem("nadnely_jeton")
+  const jeton = lireJeton()
   const estFormulaire = options.corps instanceof FormData
   const entetes = estFormulaire ? {} : { "Content-Type": "application/json" }
   if (jeton) entetes.Authorization = `Bearer ${jeton}`

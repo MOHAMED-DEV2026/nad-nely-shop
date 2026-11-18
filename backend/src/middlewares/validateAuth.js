@@ -17,6 +17,7 @@ const validerInscription = [
 const validerConnexion = [
   body('email').trim().isEmail(),
   body('mot_de_passe').notEmpty(),
+  body('se_souvenir').optional().isBoolean({ strict: true }).toBoolean(),
   (req, res, next) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ message: 'E-mail ou mot de passe invalide' });
     next();

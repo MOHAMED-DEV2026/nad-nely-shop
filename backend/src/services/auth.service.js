@@ -6,8 +6,12 @@ const crypto = require('crypto');
 const utilisateurModel = require('../models/utilisateur.model');
 const { envoyerCodeReinitialisation } = require('../config/mailer');
 
-function creerJeton(id, role) {
-  return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '2h' });
+// « seSouvenir » : connexion longue (30 jours par défaut) quand le client coche « Se souvenir de moi »
+function creerJeton(id, role, seSouvenir = false) {
+  const duree = seSouvenir
+    ? process.env.JWT_EXPIRES_IN_SOUVENIR || '30d'
+    : process.env.JWT_EXPIRES_IN || '2h';
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: duree });
 }
 
 // BF01 : crée un compte client puis renvoie un jeton
@@ -32,7 +36,7 @@ async function inscrire({ nom, prenom, email, telephone, mot_de_passe }) {
 }
 
 // BF02 : vérifie les identifiants et renvoie un jeton
-async function connecter({ email, mot_de_passe }) {
+async function connecter({ email, mot_de_passe, se_souvenir }) {
   const user = await utilisateurModel.trouverParEmail(email);
   // Même résultat dans les deux cas : on ne révèle pas si l'e-mail existe
   const ok = user && (await bcrypt.compare(mot_de_passe, user.mot_de_passe));
@@ -41,7 +45,7 @@ async function connecter({ email, mot_de_passe }) {
   return {
     success: true,
     data: {
-      token: creerJeton(user.id_utilisateur, user.role),
+      token: creerJeton(user.id_utilisateur, user.role, se_souvenir === true),
       utilisateur: { id: user.id_utilisateur, nom: user.nom, prenom: user.prenom, role: user.role },
     },
   };

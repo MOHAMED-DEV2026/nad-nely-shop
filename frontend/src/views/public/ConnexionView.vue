@@ -9,6 +9,7 @@ const route = useRoute()
 const router = useRouter()
 const email = ref("")
 const motDePasse = ref("")
+const seSouvenir = ref(false)
 
 // Message laisse par le site quand la session a expire (voir services/api.js), affiche une seule fois
 function lireMessageSession() {
@@ -29,8 +30,8 @@ async function seConnecter() {
   erreur.value = ""
   envoi.value = true
   try {
-    const reponse = await appelerApi("/auth/connexion", { method: "POST", corps: { email: email.value, mot_de_passe: motDePasse.value } })
-    auth.ouvrirSession(reponse)
+    const reponse = await appelerApi("/auth/connexion", { method: "POST", corps: { email: email.value, mot_de_passe: motDePasse.value, se_souvenir: seSouvenir.value } })
+    auth.ouvrirSession(reponse, seSouvenir.value)
     // Retour a la page d origine (adresse interne seulement), sinon accueil ou administration
     const retour = route.query.redirection
     const retourValide = typeof retour === "string" && retour.startsWith("/") && !retour.startsWith("//")
@@ -60,6 +61,11 @@ async function seConnecter() {
           <label for="mdp">Mot de passe</label>
           <ChampMotDePasse id="mdp" v-model="motDePasse" required autocomplete="current-password" />
         </div>
+        <div class="souvenir">
+          <input id="souvenir" v-model="seSouvenir" type="checkbox" aria-describedby="souvenir-aide" />
+          <label for="souvenir">Se souvenir de moi</label>
+        </div>
+        <p id="souvenir-aide" class="aide">Vous restez connecté 30 jours sur cet appareil. À éviter sur un ordinateur partagé.</p>
         <button type="submit" class="valider" :disabled="envoi">Se connecter</button>
         <p class="bas"><RouterLink to="/mot-de-passe-oublie">Mot de passe oublié ?</RouterLink></p>
         <p class="bas">Pas encore de compte ? <RouterLink :to="lienInscription">Créer un compte</RouterLink></p>
@@ -79,6 +85,10 @@ form { display: flex; flex-direction: column; gap: 16px; }
 .champ label { font-size: 14px; font-weight: 500; }
 .champ input { min-height: var(--hauteur-champ); border: 1.5px solid var(--marine); border-radius: var(--arrondi-petit); padding: 0 14px; font-size: 16px; background: var(--creme); }
 .oublie { min-height: var(--hauteur-bouton); display: flex; align-items: center; font-size: 14px; color: var(--marine);font-weight: 500; text-decoration: underline; }
+.souvenir { display: flex; align-items: center; gap: 10px; min-height: var(--hauteur-bouton); margin-bottom: -12px; }
+.souvenir input { width: 20px; height: 20px; margin: 0; accent-color: var(--marine); cursor: pointer; }
+.souvenir label { font-size: 15px; cursor: pointer; }
+.aide { margin: 0; font-size: 13px; color: var(--texte-doux); }
 .valider { min-height: 52px; border: 0; border-radius: var(--arrondi-petit); background: var(--marine); color: var(--blanc); font-weight: 600; font-size: 16px; }
 .valider:disabled { opacity: 0.6; cursor: wait; }
 .bas { margin: 0; text-align: center; font-size: 14px; }
