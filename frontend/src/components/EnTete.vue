@@ -45,8 +45,7 @@ watch(() => route.fullPath, fermerMenu)
 </script>
 
 <template>
-  <!-- En-tête « collant » : il reste en haut de l'écran pendant le défilement -->
-  <div class="entete">
+  <div>
     <div class="bande"><span class="long">Livraison dans les 17 communes de Mayotte · Retrait possible (convenu par téléphone)</span><span class="court">Livraison dans les 17 communes de Mayotte</span></div>
     <header class="entete-haut">
       <div class="entete-contenu">
@@ -97,9 +96,6 @@ watch(() => route.fullPath, fermerMenu)
 
 <style scoped>
 /* Telephone d abord : les regles ci-dessous sont pour les petits ecrans */
-.entete { position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12); }
-/* Menu des categories ouvert sur telephone : il defile s'il depasse la hauteur de l'ecran */
-.categories.ouvert { max-height: 60vh; overflow-y: auto; }
 .bande { background: var(--marque-fond); color: var(--sur-marque); font-size: 12px; padding: 8px 16px; text-align: center; }
 .bande .long { display: none; }
 .entete-haut { background: var(--blanc); border-bottom: 1px solid var(--bordure); }
