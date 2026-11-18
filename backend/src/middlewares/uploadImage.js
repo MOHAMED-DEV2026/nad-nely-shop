@@ -1,4 +1,4 @@
-// Envoi du fichier image d'un produit, avec un message clair en cas de format ou de taille refusés.
+// Envoi du fichier image d'un produit ou d'une catégorie, avec un message clair en cas de format ou de taille refusés.
 const upload = require('./upload');
 
 function envoyerImage(req, res, next) {

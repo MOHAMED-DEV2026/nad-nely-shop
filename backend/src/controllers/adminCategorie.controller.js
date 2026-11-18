@@ -17,7 +17,7 @@ async function lister(req, res, next) {
 
 async function creer(req, res, next) {
   try {
-    const r = await service.creer(req.body);
+    const r = await service.creer(req.body, req.file);
     if (!r.success) return repondreErreur(res, r);
     res.status(201).json({ id_categorie: r.data.id_categorie, message: 'Catégorie ajoutée' });
   } catch (e) { next(e); }
@@ -25,7 +25,7 @@ async function creer(req, res, next) {
 
 async function modifier(req, res, next) {
   try {
-    const r = await service.modifier(req.idValide, req.body);
+    const r = await service.modifier(req.idValide, req.body, req.file);
     if (!r.success) return repondreErreur(res, r);
     res.json({ message: 'Catégorie modifiée' });
   } catch (e) { next(e); }

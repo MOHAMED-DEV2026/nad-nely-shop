@@ -1,4 +1,4 @@
-// Envoi d'image produit : JPG, PNG ou WEBP, 2 Mo maximum
+// Envoi d'image (produit ou catégorie) : JPG, PNG ou WEBP, 2 Mo maximum
 const multer = require('multer');
 const path = require('path');
 const crypto = require('crypto');

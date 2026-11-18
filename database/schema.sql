@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `categorie` (
   `id_categorie` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `nom` varchar(50) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id_categorie`),
   UNIQUE KEY `uq_categorie_nom` (`nom`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

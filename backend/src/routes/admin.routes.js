@@ -21,8 +21,9 @@ router.delete('/produits/:id', validateId, produits.supprimer);
 
 // Catégories (BF12)
 router.get('/categories', categories.lister);
-router.post('/categories', validerCategorie, categories.creer);
-router.put('/categories/:id', validateId, validerCategorie, categories.modifier);
+// La photo (facultative) est envoyée avec le formulaire : multer d'abord, validation ensuite
+router.post('/categories', envoyerImage, validerCategorie, categories.creer);
+router.put('/categories/:id', validateId, envoyerImage, validerCategorie, categories.modifier);
 router.delete('/categories/:id', validateId, categories.supprimer);
 
 // Commandes (BF21 à BF23)

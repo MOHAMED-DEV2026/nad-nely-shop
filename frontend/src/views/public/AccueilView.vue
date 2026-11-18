@@ -1,25 +1,14 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { appelerApi } from "../../services/api.js";
+import { appelerApi, urlImage } from "../../services/api.js";
 import CarteProduit from "../../components/CarteProduit.vue";
 // Photo du hero : pour en changer, remplacer le fichier hero1.jpg du dossier assets
 import photoHero from "../../assets/hero1.jpg";
-import chaussuresHomme from "../../assets/categories/chaussures-homme.jpg";
 
 const categories = ref([]);
 const nouveautes = ref([]);
 const TEINTES = ["var(--rose)", "var(--fond-beige)", "var(--fond-bleu-clair)"];
 
-// Photos des tuiles de catégories (nom de la catégorie en minuscules -> photos).
-// Une catégorie sans photo garde sa pastille avec l'initiale.
-const PHOTOS_CATEGORIES = {
-  chaussures: [
-    { src: chaussuresHomme, alt: "Mocassins en cuir pour homme" },
-  ],
-};
-function photosCategorie(c) {
-  return PHOTOS_CATEGORIES[c.nom.trim().toLowerCase()] || null;
-}
 
 // Chaque garantie a une icône dessinée en SVG (liste de tracés « d »)
 const GARANTIES = [
@@ -70,9 +59,10 @@ onMounted(async () => {
       <h2>Nos catégories</h2>
       <p class="sous">Choisissez un univers pour afficher le catalogue.</p>
       <div class="categories">
-        <RouterLink v-for="(c, i) in categories" :key="c.id_categorie" class="tuile" :class="{ 'avec-photos': photosCategorie(c) }" :style="{ background: TEINTES[i % 3] }" :to="'/catalogue?categorie=' + c.id_categorie">
-          <span v-if="photosCategorie(c)" class="photos">
-            <img v-for="p in photosCategorie(c)" :key="p.src" :src="p.src" :alt="p.alt" loading="lazy" />
+        <RouterLink v-for="(c, i) in categories" :key="c.id_categorie" class="tuile" :class="{ 'avec-photos': c.image }" :style="{ background: TEINTES[i % 3] }" :to="'/catalogue?categorie=' + c.id_categorie">
+          <!-- Photo choisie dans l'administration (Catégories) ; sinon la pastille avec l'initiale -->
+          <span v-if="c.image" class="photos">
+            <img :src="urlImage(c.image)" alt="" loading="lazy" />
           </span>
           <span v-else class="initiale">{{ c.nom.charAt(0) }}</span>
           {{ c.nom }}
@@ -122,9 +112,9 @@ onMounted(async () => {
 .sous { margin: 0 0 16px; color: var(--texte-doux); }
 .categories { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .tuile { min-height: 96px; padding: 12px; border-radius: 16px; color: var(--marine); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; font-weight: 500; text-decoration: none; }
-/* Tuile avec photo : la photo en haut (côte à côte s'il y en a plusieurs), le nom en dessous */
+/* Tuile avec photo : la photo en haut, le nom en dessous */
 .tuile.avec-photos { padding: 0 0 12px; overflow: hidden; justify-content: flex-start; }
-.photos { width: 100%; height: 120px; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2px; }
+.photos { width: 100%; height: 120px; display: block; }
 .photos img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s ease; }
 .tuile.avec-photos:hover .photos img { transform: scale(1.05); }
 @media (prefers-reduced-motion: reduce) { .tuile.avec-photos:hover .photos img { transform: none; } }
