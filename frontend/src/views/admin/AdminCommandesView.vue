@@ -124,16 +124,16 @@ function reception(c) {
 h1 { font-family: "Playfair Display", serif; color: var(--marine); margin: 0 0 0.25rem; }
 .aide { margin: 0 0 1rem; font-size: 0.85rem; color: var(--texte-doux); }
 .alerte { background: var(--erreur-fond); color: var(--erreur-texte); padding: 0.75rem 1rem; border-radius: 10px; }
-.filtres { background: var(--blanc); border: 1px solid #E3DDD2; border-radius: 12px; padding: 1.25rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end; margin-bottom: 1.25rem; }
+.filtres { background: var(--blanc); border: 1px solid var(--bordure); border-radius: 12px; padding: 1.25rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end; margin-bottom: 1.25rem; }
 .champ { flex: 1 1 160px; display: flex; flex-direction: column; gap: 0.25rem; }
 .large { flex: 2 1 220px; }
 label { font-size: 0.8rem; font-weight: 500; }
 select, input { min-height: 44px; box-sizing: border-box; border: 1px solid var(--marine); border-radius: 8px; padding: 0 12px; background: var(--creme); font: inherit; }
-.carte { background: var(--blanc); border: 1px solid #E3DDD2; border-radius: 12px; padding: 0.5rem 1.25rem; }
+.carte { background: var(--blanc); border: 1px solid var(--bordure); border-radius: 12px; padding: 0.5rem 1.25rem; }
 .defile { overflow-x: auto; }
 table { width: 100%; min-width: 860px; border-collapse: collapse; text-align: left; }
 th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--texte-doux); padding: 0.75rem 0.5rem; border-bottom: 2px solid var(--marine); }
-td { padding: 0.6rem 0.5rem; border-bottom: 1px solid #E3DDD2; vertical-align: middle; }
+td { padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--bordure); vertical-align: middle; }
 .num { font-weight: 600; color: var(--marine); }
 .mail { font-size: 0.75rem; color: var(--texte-doux); }
 .badge { display: inline-block; padding: 2px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }

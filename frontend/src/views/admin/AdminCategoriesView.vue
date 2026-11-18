@@ -134,26 +134,26 @@ async function confirmerSuppression() {
 h1 { font-family: "Playfair Display", serif; color: var(--marine); margin: 0 0 1rem; }
 h2 { font-family: "Playfair Display", serif; color: var(--marine); margin: 0 0 0.75rem; font-size: 1.25rem; }
 .deux { display: grid; grid-template-columns: 1fr; gap: 1.25rem; align-items: start; }
-.carte { background: var(--blanc); border: 1px solid #E3DDD2; border-radius: 12px; padding: 1.25rem; }
+.carte { background: var(--blanc); border: 1px solid var(--bordure); border-radius: 12px; padding: 1.25rem; }
 .defile { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; text-align: left; min-width: 480px; }
 th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--texte-doux); padding: 0.75rem 0.5rem; border-bottom: 2px solid var(--marine); }
-td { padding: 0.6rem 0.5rem; border-bottom: 1px solid #E3DDD2; vertical-align: middle; }
+td { padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--bordure); vertical-align: middle; }
 .nom { font-weight: 600; }
 .desc { font-size: 0.8rem; color: var(--texte-doux); }
 .nb { font-weight: 600; }
 .actions { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
 .petit { padding: 0 14px; min-height: 44px; }
 .suppr { min-height: 44px; padding: 0 14px; border: 1.5px solid var(--rouge); border-radius: 8px; background: var(--blanc); color: var(--rouge); font-weight: 500; cursor: pointer; }
-.suppr:disabled { border-color: #BDBDBD; background: #EDEDED; color: #595959; cursor: not-allowed; }
-.oui { min-height: 44px; padding: 0 20px; border: 0; border-radius: 8px; background: var(--rouge); color: var(--blanc); font-weight: 500; cursor: pointer; }
+.suppr:disabled { border-color: var(--bordure); background: var(--fond-desactive); color: var(--texte-doux); cursor: not-allowed; }
+.oui { min-height: 44px; padding: 0 20px; border: 0; border-radius: 8px; background: var(--rouge); color: var(--sur-rouge); font-weight: 500; cursor: pointer; }
 .note { font-size: 0.75rem; color: var(--texte-doux); }
 .champ { margin-bottom: 1rem; }
 label { display: block; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.3rem; }
 input, textarea { width: 100%; box-sizing: border-box; padding: 0.7rem 0.85rem; border: 1.5px solid var(--marine); border-radius: 8px; font: inherit; background: var(--creme); }
 .erreur { color: var(--rouge); font-size: 0.85rem; margin: 0.3rem 0 0; }
 .alerte { background: var(--erreur-fond); color: var(--erreur-texte); padding: 0.75rem 1rem; border-radius: 10px; }
-.succes { background: #DDEFDC; color: #1E5B25; padding: 0.75rem 1rem; border-radius: 10px; }
+.succes { background: var(--succes-fond); color: var(--succes-texte); padding: 0.75rem 1rem; border-radius: 10px; }
 .confirmation { margin-top: 1.25rem; max-width: 620px; }
 @media (min-width: 1024px) {
   .deux { grid-template-columns: 2fr 1fr; }

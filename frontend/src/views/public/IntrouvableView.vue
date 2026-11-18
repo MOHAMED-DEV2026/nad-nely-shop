@@ -12,6 +12,6 @@
 
 <style scoped>
 .page { max-width: 700px; margin: 0 auto; padding: 64px 16px; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
-.code { font-family: "Playfair Display", serif; font-size: 72px; font-weight: 700; color: var(--or); line-height: 1; background: var(--marine); border-radius: 20px; padding: 12px 32px; }
+.code { font-family: "Playfair Display", serif; font-size: 72px; font-weight: 700; color: var(--or); line-height: 1; background: var(--marque-fond); border-radius: 20px; padding: 12px 32px; }
 .actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
 </style>

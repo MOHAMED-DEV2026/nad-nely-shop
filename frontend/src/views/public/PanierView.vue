@@ -96,7 +96,7 @@ td { padding: 16px 8px; border-bottom: 1px solid var(--bordure); vertical-align:
 .vignette img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .nom { font-weight: 600; }
 .nom:hover { text-decoration: underline; }
-.cat { font-size: 12px; color: #555555; }
+.cat { font-size: 12px; color: var(--texte-doux); }
 .sous { font-weight: 600; color: var(--marine); }
 .supprimer { min-height: var(--hauteur-bouton); padding: 0 12px; border: 1.5px solid var(--rouge); border-radius:var(--arrondi-petit); background: var(--blanc); color: var(--rouge); font-size: 14px; font-weight: 500; }
 .pied-liste { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 8px; }
@@ -104,7 +104,7 @@ td { padding: 16px 8px; border-bottom: 1px solid var(--bordure); vertical-align:
 .confirmation { margin: 0 8px 16px; padding: 16px; border: 1px solid var(--bordure); border-radius: var(--arrondi-moyen); background: var(--creme); }
 .confirmation p { margin: 0 0 12px; font-size: 14px; }
 .confirmation div { display: flex; gap: 12px; flex-wrap: wrap; }
-.oui { min-height: var(--hauteur-bouton); padding: 0 20px; border: 0; border-radius: var(--arrondi-petit); background: var(--rouge); color: var(--blanc); font-weight: 500; }
+.oui { min-height: var(--hauteur-bouton); padding: 0 20px; border: 0; border-radius: var(--arrondi-petit); background: var(--rouge); color: var(--sur-rouge); font-weight: 500; }
 .non { min-height: var(--hauteur-bouton); padding: 0 20px; border: 1.5px solid var(--marine); border-radius: var(--arrondi-petit); background: var(--blanc); color: var(--marine); font-weight: 500; }
 .recap { flex: 1 1 300px; min-width: 0; background: var(--blanc); border: 1px solid var(--bordure); border-radius: var(--arrondi-moyen); padding: 24px; display: flex; flex-direction: column; gap: 12px; }
 .recap h2 { margin: 0; font-size: 24px; }

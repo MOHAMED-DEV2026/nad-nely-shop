@@ -101,9 +101,9 @@ async function changerMotDePasse() {
 .carte { background: var(--blanc); border: 1px solid var(--bordure); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
 label { font-size: 14px; font-weight: 500; }
 input { min-height: 48px; padding: 0 14px; border: 1.5px solid var(--marine); border-radius: 8px; font-size: 16px; background: var(--creme); }
-input:disabled { border-color: var(--bordure); background: #F4F1EC; color: var(--texte-doux); }
+input:disabled { border-color: var(--bordure); background: var(--fond-desactive); color: var(--texte-doux); }
 .aide { font-size: 13px; color: var(--texte-doux); margin: 0; }
-.succes { background: #DDF0DE; color: #1B5E20; padding: 12px; border-radius: 8px; margin: 0; }
+.succes { background: var(--succes-fond); color: var(--succes-texte); padding: 12px; border-radius: 8px; margin: 0; }
 .erreur { background: var(--erreur-fond); color: var(--erreur-texte); padding: 12px; border-radius: 8px; margin: 0; }
 @media (min-width: 768px) { .deux { grid-template-columns: 1fr 1fr; } }
 </style>

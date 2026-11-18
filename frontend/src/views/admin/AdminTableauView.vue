@@ -25,7 +25,7 @@ const kpis = computed(() => {
   if (!s) return [];
   return [
     { label: "Commandes à traiter", valeur: s.a_traiter, lien: "Voir les commandes confirmées", to: "/admin/commandes?statut=confirmee", accent: "#C62828" },
-    { label: "Commandes du mois", valeur: s.commandes_mois, lien: "Voir la liste", to: "/admin/commandes", accent: "#1B2A4A" },
+    { label: "Commandes du mois", valeur: s.commandes_mois, lien: "Voir la liste", to: "/admin/commandes", accent: "var(--marine)" },
     { label: "Chiffre d'affaires du mois", valeur: formaterPrix(s.ca_mois), lien: "Voir les commandes", to: "/admin/commandes", accent: "#C9A44C" },
     { label: "Produits en rupture", valeur: s.ruptures, lien: "Voir les produits", to: "/admin/produits", accent: "#ED6C02" },
     { label: "Expirent sous 30 jours", valeur: s.bientot_expires, lien: "Voir les produits", to: "/admin/produits", accent: "#ED6C02" },
@@ -121,11 +121,11 @@ h1 { margin: 0; font-size: 30px; }
 .boutons { display: flex; flex-wrap: wrap; gap: 12px; }
 .erreur { background: var(--erreur-fond); color: var(--erreur-texte); padding: 12px; border-radius: 8px; }
 .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 16px; }
-.kpi { background: var(--blanc); border: 1px solid #E3DDD2; border-top: 4px solid; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 4px; min-height: 120px; text-decoration: none; color: inherit; }
+.kpi { background: var(--blanc); border: 1px solid var(--bordure); border-top: 4px solid; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 4px; min-height: 120px; text-decoration: none; color: inherit; }
 .kpi-label { font-size: 13px; color: var(--texte-doux); font-weight: 500; }
 .kpi-valeur { font-family: "Playfair Display", serif; font-size: 34px; font-weight: 700; color: var(--marine); line-height: 1.2; }
 .kpi-lien { margin-top: auto; font-size: 13px; color: var(--marine); font-weight: 600; text-decoration: underline; }
-.carte { background: var(--blanc); border: 1px solid #E3DDD2; border-radius: 12px; padding: 20px; }
+.carte { background: var(--blanc); border: 1px solid var(--bordure); border-radius: 12px; padding: 20px; }
 .carte h2 { margin: 0 0 8px; font-size: 22px; }
 .titre-carte { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
 .titre-carte h2 { margin: 0; }
@@ -133,13 +133,13 @@ h1 { margin: 0; font-size: 30px; }
 .defile { overflow-x: auto; }
 table { width: 100%; min-width: 700px; border-collapse: collapse; text-align: left; }
 th { background: var(--marine); color: var(--blanc); font-size: 13px; padding: 12px 16px; font-weight: 600; }
-td { padding: 12px 16px; border-bottom: 1px solid #E3DDD2; }
+td { padding: 12px 16px; border-bottom: 1px solid var(--bordure); }
 .num { font-weight: 600; color: var(--marine); }
 .badge { display: inline-block; padding: 2px 12px; border-radius: 999px; font-size: 13px; font-weight: 600; }
 .petit { min-height: 44px; padding: 0 14px; display: inline-flex; align-items: center; border: 1.5px solid var(--marine); border-radius: 8px; color: var(--marine); font-size: 14px; font-weight: 500; text-decoration: none; }
 .deux { display: grid; gap: 24px; }
 .aide { font-size: 13px; color: var(--texte-doux); margin: 0 0 12px; }
-.alerte { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid #E3DDD2; }
+.alerte { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--bordure); }
 .raccourcis { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .raccourcis a { min-height: 64px; padding: 12px; border-radius: 12px; background: var(--rose); color: var(--marine); display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 500; font-size: 14px; text-decoration: none; }
 @media (min-width: 1024px) { .deux { grid-template-columns: 3fr 2fr; } }

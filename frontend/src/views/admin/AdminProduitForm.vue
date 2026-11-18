@@ -199,7 +199,7 @@ async function envoyer() {
 .page { max-width: 760px; }
 .retour { color: var(--marine); font-size: 0.9rem; text-decoration: none; }
 h1 { font-family: "Playfair Display", serif; color: var(--marine); margin: 0.5rem 0 1.25rem; }
-.carte { background: var(--blanc); border: 1px solid #E3DDD2; border-radius: 16px; padding: 1.25rem; }
+.carte { background: var(--blanc); border: 1px solid var(--bordure); border-radius: 16px; padding: 1.25rem; }
 .champ { margin-bottom: 1rem; }
 label { display: block; font-weight: 600; font-size: 0.9rem; color: var(--marine); margin-bottom: 0.35rem; }
 input[type="text"], input[type="number"], input[type="date"], textarea, select { width: 100%; padding: 0.7rem 0.85rem; border: 1px solid var(--bordure); border-radius: 10px; font: inherit; background: var(--blanc); box-sizing: border-box; }
@@ -208,7 +208,7 @@ textarea { resize: vertical; }
 .erreur { color: var(--rouge); font-size: 0.85rem; margin: 0.3rem 0 0; }
 .alerte { background: var(--erreur-fond); color: var(--erreur-texte); padding: 0.75rem 1rem; border-radius: 10px; margin-bottom: 1rem; }
 .image-zone { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
-.vignette { width: 96px; height: 96px; object-fit: cover; border-radius: 12px; border: 1px solid #E3DDD2; }
+.vignette { width: 96px; height: 96px; object-fit: cover; border-radius: 12px; border: 1px solid var(--bordure); }
 .vide { background: var(--rose); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--texte-doux); text-align: center; }
 .case { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
 .case label { margin: 0; }

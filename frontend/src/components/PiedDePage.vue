@@ -22,7 +22,7 @@
 </template>
 
 <style scoped>
-.pied { background: var(--marine); color: var(--creme); margin-top: 48px; }
+.pied { background: var(--marque-fond); color: var(--sur-marque); margin-top: 48px; }
 .pied-contenu { max-width: var(--largeur-max); margin: 0 auto; padding: 32px 24px; display: flex; flex-wrap: wrap; gap: 32px 40px; justify-content: space-between; }
 .pied-bloc { flex: 1 1 200px; display: flex; flex-direction: column; }
 .pied-bloc p { margin: 0 0 8px; }

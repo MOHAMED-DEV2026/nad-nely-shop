@@ -2,9 +2,17 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NAD-NELY Shop</title>
+    <script>
+      // Thème choisi (clair / sombre), appliqué avant l affichage pour éviter un flash blanc
+      try {
+        var t = localStorage.getItem("nadnely_theme");
+        if (t !== "clair" && t !== "sombre") t = matchMedia("(prefers-color-scheme: dark)").matches ? "sombre" : "clair";
+        document.documentElement.dataset.theme = t === "sombre" ? "dark" : "light";
+      } catch (e) {}
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
   </head>

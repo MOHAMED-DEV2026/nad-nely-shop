@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { auth } from "../../stores/auth.js";
+import BoutonTheme from "../../components/BoutonTheme.vue";
 
 const router = useRouter();
 
@@ -24,6 +25,7 @@ function deconnecter() {
       <div class="bas">
         <RouterLink to="/">Voir la boutique</RouterLink>
         <button type="button" @click="deconnecter">Se déconnecter</button>
+        <BoutonTheme class="theme" />
       </div>
     </aside>
     <main class="principal"><RouterView /></main>
@@ -31,14 +33,15 @@ function deconnecter() {
 </template>
 
 <style scoped>
-.admin { min-height: 100vh; display: flex; flex-direction: column; background: #F4F1EC; }
-.menu { background: var(--marine); color: var(--creme); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.admin { min-height: 100vh; display: flex; flex-direction: column; background: var(--creme); }
+.menu { background: var(--marque-fond); color: var(--sur-marque); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
 .marque { font-family: "Playfair Display", serif; font-weight: 700; font-size: 18px; }
 .marque span { font-family: "Poppins", sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 2px; color: #E6D9B0; }
 .liens { display: flex; flex-wrap: wrap; gap: 4px; }
-.liens a, .bas a, .bas button { min-height: 44px; padding: 0 16px; display: flex; align-items: center; border-radius: 8px; color: var(--creme); text-decoration: none; background: transparent; border: 0; font-size: 15px; font-family: inherit; cursor: pointer; }
-.liens a.actif { background: var(--or); color: var(--marine); font-weight: 600; }
+.liens a, .bas a, .bas button { min-height: 44px; padding: 0 16px; display: flex; align-items: center; border-radius: 8px; color: var(--sur-marque); text-decoration: none; background: transparent; border: 0; font-size: 15px; font-family: inherit; cursor: pointer; }
+.liens a.actif { background: var(--or); color: var(--sur-or); font-weight: 600; }
 .bas { display: flex; flex-wrap: wrap; gap: 4px; border-top: 1px solid var(--ligne-pied); padding-top: 12px; }
+.bas .theme { padding: 0; margin: 4px 0 0 12px; }
 .principal { flex: 1; min-width: 0; padding: 24px 16px; }
 @media (min-width: 1024px) { .admin { flex-direction: row; } .menu { flex: 0 0 250px; padding: 24px 16px; } .liens { flex-direction: column; } .bas { margin-top: auto; flex-direction: column; } .principal { padding: 32px 40px; } }
 </style>

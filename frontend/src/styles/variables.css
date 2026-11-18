@@ -1,4 +1,7 @@
+/* Thème clair (par défaut) */
 :root {
+  color-scheme: light;
+
   /* Couleurs de la marque (prises des maquettes) */
   --marine: #1B2A4A;
   --or: #C9A44C;
@@ -15,12 +18,23 @@
   --fond-beige: #E9E1CE;
   --fond-bleu-clair: #DCE3F0;
   --ligne-pied: #34456B;
+  --fond-desactive: #E6E6E6;
+
+  /* Bandeau, pied de page, menu admin : toujours bleu marine, texte clair */
+  --marque-fond: #1B2A4A;
+  --sur-marque: #FAF8F5;
+
+  /* Texte posé sur un bouton rouge ou or (ne change pas avec le thème) */
+  --sur-rouge: #FFFFFF;
+  --sur-or: #1B2A4A;
 
   /* Messages */
   --erreur-fond: #F8D9D9;
   --erreur-texte: #8E1B1B;
   --alerte-fond: #FFE9CC;
   --alerte-texte: #7A3E00;
+  --succes-fond: #DDF0DE;
+  --succes-texte: #1B5E20;
   --rouge: #C62828;
 
   /* Polices */
@@ -38,4 +52,29 @@
 
   /* Largeur maximale du contenu */
   --largeur-max: 1280px;
+}
+
+/* Thème sombre : seules les couleurs changent.
+   « marine » devient clair (titres, boutons) et « blanc » devient le fond sombre des cartes :
+   un bouton marine avec un texte blanc reste donc lisible dans les deux thèmes. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --marine: #DCE3F0;
+  --rose: #3B2830;
+  --creme: #0F1522;
+  --blanc: #182033;
+  --texte: #E6E9F0;
+  --texte-doux: #AEB7C7;
+  --bordure: #2C3650;
+  --fond-beige: #2E2A20;
+  --fond-bleu-clair: #1E2A42;
+  --ligne-pied: #2C3A5A;
+  --fond-desactive: #2A3142;
+  --marque-fond: #0A101C;
+  --erreur-fond: #3D1D20;
+  --erreur-texte: #F4B4B4;
+  --alerte-fond: #3A2B14;
+  --alerte-texte: #F2C98B;
+  --succes-fond: #183322;
+  --succes-texte: #9FD8A5;
 }

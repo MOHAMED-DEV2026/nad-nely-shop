@@ -54,6 +54,6 @@ function toucheRelachee(e) {
 <style scoped>
 .mdp { position: relative; display: flex; }
 .mdp input { flex: 1 1 auto; min-width: 0; min-height: var(--hauteur-champ); border: 1.5px solid var(--marine); border-radius: var(--arrondi-petit); padding: 0 52px 0 14px; font-size: 16px; background: var(--creme); }
-.oeil { position: absolute; top: 0; right: 0; width: 48px; height: 100%; min-height: 44px; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: #7a7a7a; cursor: pointer; border-radius: var(--arrondi-petit); touch-action: none; user-select: none; -webkit-user-select: none; }
-.oeil:hover, .oeil:active { background: rgba(0, 0, 0, 0.06); }
+.oeil { position: absolute; top: 0; right: 0; width: 48px; height: 100%; min-height: 44px; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: var(--texte-doux); cursor: pointer; border-radius: var(--arrondi-petit); touch-action: none; user-select: none; -webkit-user-select: none; }
+.oeil:hover, .oeil:active { background: rgba(127, 127, 127, 0.18); }
 </style>

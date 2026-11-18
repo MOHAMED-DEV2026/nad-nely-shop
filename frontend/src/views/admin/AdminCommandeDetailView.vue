@@ -148,13 +148,13 @@ h2 { font-family: "Playfair Display", serif; color: var(--marine); margin: 0 0 0
 .ariane a { color: inherit; text-decoration: underline; }
 .deux { display: grid; grid-template-columns: 1fr; gap: 1.25rem; align-items: start; margin-bottom: 1.25rem; }
 .colonne { display: flex; flex-direction: column; gap: 1rem; }
-.carte { background: var(--blanc); border: 1px solid #E3DDD2; border-radius: 12px; padding: 1.25rem; }
+.carte { background: var(--blanc); border: 1px solid var(--bordure); border-radius: 12px; padding: 1.25rem; }
 .action, .confirmation { margin-bottom: 1.25rem; }
 .confirmation { max-width: 640px; }
 .defile { overflow-x: auto; }
 table { width: 100%; min-width: 480px; border-collapse: collapse; text-align: left; }
 th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--texte-doux); padding: 0.6rem 0.5rem; border-bottom: 2px solid var(--marine); }
-td { padding: 0.7rem 0.5rem; border-bottom: 1px solid #E3DDD2; }
+td { padding: 0.7rem 0.5rem; border-bottom: 1px solid var(--bordure); }
 .gras { font-weight: 600; }
 .droite { text-align: right; }
 .total { font-weight: 700; font-size: 1.1rem; color: var(--marine); }
@@ -166,9 +166,9 @@ dd { margin: 0; font-weight: 500; }
 .ligne { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
 .espace { flex: 1; }
 .annuler { min-height: 48px; padding: 0 24px; border: 1.5px solid var(--rouge); border-radius: 8px; background: var(--blanc); color: var(--rouge); font-weight: 500; cursor: pointer; }
-.oui { min-height: 44px; padding: 0 20px; border: 0; border-radius: 8px; background: var(--rouge); color: var(--blanc); font-weight: 500; cursor: pointer; }
+.oui { min-height: 44px; padding: 0 20px; border: 0; border-radius: 8px; background: var(--rouge); color: var(--sur-rouge); font-weight: 500; cursor: pointer; }
 .alerte { background: var(--erreur-fond); color: var(--erreur-texte); padding: 0.75rem 1rem; border-radius: 10px; }
-.succes { background: #DDEFDC; color: #1E5B25; padding: 0.75rem 1rem; border-radius: 10px; }
+.succes { background: var(--succes-fond); color: var(--succes-texte); padding: 0.75rem 1rem; border-radius: 10px; }
 @media (min-width: 1024px) {
   .deux { grid-template-columns: 2fr 1fr; }
 }

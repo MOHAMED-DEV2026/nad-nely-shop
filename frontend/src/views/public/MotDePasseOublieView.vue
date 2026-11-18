@@ -90,6 +90,6 @@ input { min-height: 48px; padding: 0 14px; border: 1.5px solid var(--marine); bo
 .code { font-size: 20px; letter-spacing: 8px; text-align: center; }
 .info { background: var(--fond-bleu-clair); color: var(--marine); padding: 12px; border-radius: 8px; font-size: 13px; margin: 0; }
 .aide { font-size: 13px; color: var(--texte-doux); margin: 0; }
-.succes { background: #DDF0DE; color: #1B5E20; padding: 12px; border-radius: 8px; margin: 0; }
+.succes { background: var(--succes-fond); color: var(--succes-texte); padding: 12px; border-radius: 8px; margin: 0; }
 .erreur { background: var(--erreur-fond); color: var(--erreur-texte); padding: 12px; border-radius: 8px; margin: 0; }
 </style>

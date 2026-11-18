@@ -86,11 +86,11 @@ h1 { font-family: "Playfair Display", serif; color: var(--marine); margin: 0 0 0
 .recherche { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.25rem; }
 .recherche input { flex: 1 1 300px; min-height: 44px; box-sizing: border-box; border: 1px solid var(--marine); border-radius: 8px; padding: 0 14px; background: var(--blanc); font: inherit; }
 .cache { position: absolute; left: -9999px; }
-.carte { background: var(--blanc); border: 1px solid #E3DDD2; border-radius: 12px; padding: 0.5rem 1.25rem; }
+.carte { background: var(--blanc); border: 1px solid var(--bordure); border-radius: 12px; padding: 0.5rem 1.25rem; }
 .defile { overflow-x: auto; }
 table { width: 100%; min-width: 820px; border-collapse: collapse; text-align: left; }
 th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--texte-doux); padding: 0.75rem 0.5rem; border-bottom: 2px solid var(--marine); }
-td { padding: 0.75rem 0.5rem; border-bottom: 1px solid #E3DDD2; }
+td { padding: 0.75rem 0.5rem; border-bottom: 1px solid var(--bordure); }
 .gras { font-weight: 600; }
 .pagination { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; padding: 1rem 0; }
 .pagination button { min-width: 44px; min-height: 44px; border: 1.5px solid var(--marine); border-radius: 8px; background: var(--blanc); color: var(--marine); cursor: pointer; }

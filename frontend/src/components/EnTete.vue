@@ -5,6 +5,7 @@ import logo from "../assets/logo.png"
 import { appelerApi } from "../services/api"
 import { nombreArticles } from "../stores/panier"
 import { auth, estConnecte } from "../stores/auth"
+import BoutonTheme from "./BoutonTheme.vue"
 
 const route = useRoute()
 const router = useRouter()
@@ -61,6 +62,7 @@ watch(() => route.fullPath, fermerMenu)
           <button type="submit">Rechercher</button>
         </form>
         <div class="actions">
+          <BoutonTheme class="theme" />
           <template v-if="estConnecte">
             <RouterLink to="/mon-compte" class="bouton bouton-contour action-texte">Mon compte</RouterLink>
             <button type="button" class="bouton bouton-contour action-texte" @click="deconnexion">Se déconnecter</button>
@@ -94,7 +96,7 @@ watch(() => route.fullPath, fermerMenu)
 
 <style scoped>
 /* Telephone d abord : les regles ci-dessous sont pour les petits ecrans */
-.bande { background: var(--marine); color: var(--creme); font-size: 12px; padding: 8px 16px; text-align: center; }
+.bande { background: var(--marque-fond); color: var(--sur-marque); font-size: 12px; padding: 8px 16px; text-align: center; }
 .bande .long { display: none; }
 .entete-haut { background: var(--blanc); border-bottom: 1px solid var(--bordure); }
 .entete-contenu { max-width: var(--largeur-max); margin: 0 auto; padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
@@ -103,10 +105,11 @@ watch(() => route.fullPath, fermerMenu)
 .logo { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; display: block; }
 .marque-nom { font-family: var(--police-titre); font-weight: 700; font-size: 17px; color: var(--marine); }
 .nom-long { display: none; }
-.actions { order: 3; display: flex; gap: 4px; }
+.actions { order: 3; display: flex; align-items: center; gap: 4px; }
+.theme { color: var(--marine); }
 .action-texte { display: none; }
 .action-icone { position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--marine); }
-.badge { position: absolute; top: 2px; right: 0; background: #C62828; color: var(--blanc); border-radius: 999px; min-width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
+.badge { position: absolute; top: 2px; right: 0; background: var(--rouge); color: var(--sur-rouge); border-radius: 999px; min-width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
 .recherche { order: 4; flex: 1 1 100%; display: flex; padding-bottom: 4px; }
 .recherche input { flex: 1; min-width: 0; min-height: var(--hauteur-bouton); border: 1px solid var(--marine); border-radius: var(--arrondi-petit); padding: 0 16px; font-size: 15px; background: var(--creme); }
 .recherche button { display: none; }
@@ -117,7 +120,7 @@ watch(() => route.fullPath, fermerMenu)
 .categories a, .lien-menu { min-height: var(--hauteur-bouton); display: flex; align-items: center; font-size: 15px; font-weight: 500; color: var(--marine); background: none; border: 0; padding: 0; text-align: left; }
 .categories a:hover, .lien-menu:hover { text-decoration: underline; }
 .menu-compte { display: flex; flex-direction: column; border-top: 1px solid var(--bordure); margin-top: 8px; padding-top: 8px; }
-.pastille { background: #C62828; color: var(--blanc); border-radius: 999px; min-width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; margin-left: 8px; }
+.pastille { background: var(--rouge); color: var(--sur-rouge); border-radius: 999px; min-width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; margin-left: 8px; }
 
 /* Tablette : a partir de 768 px */
 @media (min-width: 768px) {
