@@ -4,7 +4,6 @@ import { appelerApi } from "../../services/api.js";
 import CarteProduit from "../../components/CarteProduit.vue";
 // Photo du hero : pour en changer, remplacer le fichier hero1.jpg du dossier assets
 import photoHero from "../../assets/hero1.jpg";
-import chaussuresFemme from "../../assets/categories/chaussures-femme.png";
 import chaussuresHomme from "../../assets/categories/chaussures-homme.jpg";
 
 const categories = ref([]);
@@ -15,7 +14,6 @@ const TEINTES = ["var(--rose)", "var(--fond-beige)", "var(--fond-bleu-clair)"];
 // Une catégorie sans photo garde sa pastille avec l'initiale.
 const PHOTOS_CATEGORIES = {
   chaussures: [
-    { src: chaussuresFemme, alt: "Sandales à talons pour femme" },
     { src: chaussuresHomme, alt: "Mocassins en cuir pour homme" },
   ],
 };
@@ -124,11 +122,10 @@ onMounted(async () => {
 .sous { margin: 0 0 16px; color: var(--texte-doux); }
 .categories { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .tuile { min-height: 96px; padding: 12px; border-radius: 16px; color: var(--marine); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; font-weight: 500; text-decoration: none; }
-/* Tuile avec photos : les deux photos côte à côte en haut, le nom en dessous */
+/* Tuile avec photo : la photo en haut (côte à côte s'il y en a plusieurs), le nom en dessous */
 .tuile.avec-photos { padding: 0 0 12px; overflow: hidden; justify-content: flex-start; }
-.photos { width: 100%; height: 120px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+.photos { width: 100%; height: 120px; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2px; }
 .photos img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s ease; }
-.photos img:first-child { object-fit: contain; background: #FFFFFF; }
 .tuile.avec-photos:hover .photos img { transform: scale(1.05); }
 @media (prefers-reduced-motion: reduce) { .tuile.avec-photos:hover .photos img { transform: none; } }
 .initiale { width: 40px; height: 40px; border-radius: 50%; background: var(--blanc); display: flex; align-items: center; justify-content: center; font-family: "Playfair Display", serif; font-weight: 700; font-size: 20px; }
