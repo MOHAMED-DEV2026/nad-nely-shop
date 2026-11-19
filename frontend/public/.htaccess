@@ -1,0 +1,7 @@
+# Application Vue (mode history) : toute adresse inconnue renvoie vers index.html
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.html$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]

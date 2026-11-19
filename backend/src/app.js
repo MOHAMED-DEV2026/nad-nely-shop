@@ -34,7 +34,10 @@ app.use('/api/paiements', require('./routes/paiement.routes'));
 app.use('/api/compte', require('./routes/compte.routes'));
 
 // Images des produits (fichiers du dossier uploads)
-app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+// Servies sous /api/uploads : en production (alwaysdata) seul le chemin /api est envoyé au backend
+const dossierUploads = express.static(path.join(__dirname, '..', 'uploads'));
+app.use('/api/uploads', dossierUploads);
+app.use('/uploads', dossierUploads);
 
 app.use(notFound);
 app.use(errorHandler);
