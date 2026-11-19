@@ -38,4 +38,12 @@ const validerReinitialisation = [
   validation,
 ];
 
-module.exports = { validerInscription, validerConnexion, validerMotDePasseOublie, validerReinitialisation };
+const validerVerificationEmail = [
+  body('email').trim().isEmail().withMessage('Adresse e-mail invalide'),
+  body('code').trim().matches(/^\d{6}$/).withMessage('Le code doit contenir 6 chiffres'),
+  validation,
+];
+
+module.exports = {
+  validerInscription, validerConnexion, validerMotDePasseOublie, validerReinitialisation, validerVerificationEmail,
+};

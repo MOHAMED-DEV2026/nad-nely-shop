@@ -19,9 +19,9 @@ const POLITIQUE_MDP = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
   }
   const hash = await bcrypt.hash(motDePasse, 10);
   await db.query(
-    `INSERT INTO utilisateur (nom, prenom, email, mot_de_passe, role)
-     VALUES ('Administrateur', 'NAD-NELY', ?, ?, 'admin')
-     ON DUPLICATE KEY UPDATE mot_de_passe = VALUES(mot_de_passe), role = 'admin'`,
+    `INSERT INTO utilisateur (nom, prenom, email, mot_de_passe, role, email_verifie)
+     VALUES ('Administrateur', 'NAD-NELY', ?, ?, 'admin', 1)
+     ON DUPLICATE KEY UPDATE mot_de_passe = VALUES(mot_de_passe), role = 'admin', email_verifie = 1`,
     [email, hash]
   );
   console.log('Compte administrateur prêt :', email);

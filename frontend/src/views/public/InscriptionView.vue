@@ -2,7 +2,6 @@
 import { ref, reactive } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { appelerApi } from "../../services/api"
-import { auth } from "../../stores/auth"
 import ChampMotDePasse from "../../components/ChampMotDePasse.vue"
 
 const route = useRoute()
@@ -32,15 +31,13 @@ async function sInscrire() {
   if (!verifier()) return
   envoi.value = true
   try {
-    const reponse = await appelerApi("/auth/inscription", {
+    const email = champs.email.trim()
+    await appelerApi("/auth/inscription", {
       method: "POST",
-      corps: { nom: champs.nom.trim(), prenom: champs.prenom.trim(), email: champs.email.trim(), telephone: champs.telephone.trim(), mot_de_passe: champs.motDePasse },
+      corps: { nom: champs.nom.trim(), prenom: champs.prenom.trim(), email, telephone: champs.telephone.trim(), mot_de_passe: champs.motDePasse },
     })
-    auth.ouvrirSession(reponse)
-    // Retour a la page d origine (adresse interne seulement), sinon accueil
-    const retour = route.query.redirection
-    const retourValide = typeof retour === "string" && retour.startsWith("/") && !retour.startsWith("//")
-    router.push(retourValide ? retour : "/")
+    // Le compte est cree mais pas encore actif : on saisit le code recu par e-mail
+    router.push({ path: "/verification", query: { ...route.query, email } })
   } catch (e) {
     if (e.statut === 409) {
       erreurs.email = "Cette adresse e-mail est déjà utilisée."

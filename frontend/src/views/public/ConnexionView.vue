@@ -37,6 +37,11 @@ async function seConnecter() {
     const retourValide = typeof retour === "string" && retour.startsWith("/") && !retour.startsWith("//")
     router.push(retourValide ? retour : (reponse.utilisateur.role === "admin" ? "/admin" : "/"))
   } catch (e) {
+    // Compte jamais verifie : un nouveau code a ete envoye, on va le saisir
+    if (e.statut === 403 && e.donnees && e.donnees.code === "EMAIL_NON_VERIFIE") {
+      router.push({ path: "/verification", query: { ...route.query, email: email.value.trim(), depuis: "connexion" } })
+      return
+    }
     if (e.statut === 429) erreur.value = "Trop de tentatives. Réessayez dans quelques minutes."
     else if (e.statut === 400 || e.statut === 401) erreur.value = "E-mail ou mot de passe incorrect."
     else erreur.value = "Connexion impossible pour le moment. Réessayez plus tard."

@@ -50,16 +50,42 @@ async function enregistrerCode(id, codeHache) {
   );
 }
 
+// Inscription d'une adresse déjà enregistrée mais jamais vérifiée : on remplace les informations
+// (seul le vrai propriétaire de l'adresse pourra valider le compte avec le code reçu)
+async function remplacerNonVerifie(id, { nom, prenom, telephone, motDePasseHache }) {
+  await db.query(
+    'UPDATE utilisateur SET nom = ?, prenom = ?, telephone = ?, mot_de_passe = ? WHERE id_utilisateur = ? AND email_verifie = 0',
+    [nom, prenom, telephone || null, motDePasseHache, id]
+  );
+}
+
+// Enregistre le code (haché) de vérification de l'adresse e-mail, valable 15 minutes
+async function enregistrerCodeVerification(id, codeHache) {
+  await db.query(
+    'UPDATE utilisateur SET code_verification = ?, expiration_verification = DATE_ADD(NOW(), INTERVAL 15 MINUTE) WHERE id_utilisateur = ?',
+    [codeHache, id]
+  );
+}
+
+// L'adresse est vérifiée : le code est effacé (il ne sert qu'une fois)
+async function marquerEmailVerifie(id) {
+  await db.query(
+    'UPDATE utilisateur SET email_verifie = 1, code_verification = NULL, expiration_verification = NULL WHERE id_utilisateur = ?',
+    [id]
+  );
+}
+
 // Vrai si la date d'expiration est encore dans le futur (comparaison faite par la base, avec son horloge)
 async function dateEstFuture(date) {
   const [[{ valide }]] = await db.query('SELECT (? > NOW()) AS valide', [date]);
   return Boolean(valide);
 }
 
-// RG05, RG03 : nouveau mot de passe, et le code est effacé (il ne sert qu'une fois)
+// RG05, RG03 : nouveau mot de passe, et le code est effacé (il ne sert qu'une fois).
+// Le code a été reçu par e-mail : l'adresse est donc vérifiée par la même occasion.
 async function reinitialiserMotDePasse(id, motDePasseHache) {
   await db.query(
-    'UPDATE utilisateur SET mot_de_passe = ?, code_reinitialisation = NULL, expiration_code = NULL WHERE id_utilisateur = ?',
+    'UPDATE utilisateur SET mot_de_passe = ?, code_reinitialisation = NULL, expiration_code = NULL, email_verifie = 1 WHERE id_utilisateur = ?',
     [motDePasseHache, id]
   );
 }
@@ -95,4 +121,5 @@ async function chercherClients(recherche, page, parPage) {
 module.exports = {
   chercherClients, trouverParEmail, trouverProfilParId, trouverMotDePasseParId, creer,
   modifierProfil, modifierMotDePasse, enregistrerCode, dateEstFuture, reinitialiserMotDePasse,
+  remplacerNonVerifie, enregistrerCodeVerification, marquerEmailVerifie,
 };

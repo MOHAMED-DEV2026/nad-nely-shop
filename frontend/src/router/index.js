@@ -19,6 +19,7 @@ import IntrouvableView from "../views/public/IntrouvableView.vue";
 import MentionsLegalesView from "../views/public/MentionsLegalesView.vue";
 import ConfidentialiteView from "../views/public/ConfidentialiteView.vue";
 import MotDePasseOublieView from "../views/public/MotDePasseOublieView.vue";
+import VerificationEmailView from "../views/public/VerificationEmailView.vue";
 import MonCompteView from "../views/public/MonCompteView.vue";
 import MesCommandesView from "../views/public/MesCommandesView.vue";
 import CommandeDetailView from "../views/public/CommandeDetailView.vue";
@@ -33,6 +34,7 @@ const routes = [
   { path: "/connexion", component: ConnexionView },
   { path: "/inscription", component: InscriptionView },
   { path: "/mot-de-passe-oublie", component: MotDePasseOublieView },
+  { path: "/verification", component: VerificationEmailView },
   { path: "/mentions-legales", component: MentionsLegalesView },
   { path: "/confidentialite", component: ConfidentialiteView },
   { path: "/:pathMatch(.*)*", component: IntrouvableView },

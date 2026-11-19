@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const utilisateurModel = require('../models/utilisateur.model');
-const { envoyerCodeReinitialisation } = require('../config/mailer');
+const { envoyerCodeReinitialisation, envoyerCodeVerification } = require('../config/mailer');
 
 // « seSouvenir » : connexion longue (30 jours par défaut) quand le client coche « Se souvenir de moi »
 function creerJeton(id, role, seSouvenir = false) {
@@ -14,25 +14,72 @@ function creerJeton(id, role, seSouvenir = false) {
   return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: duree });
 }
 
-// BF01 : crée un compte client puis renvoie un jeton
-async function inscrire({ nom, prenom, email, telephone, mot_de_passe }) {
-  const existant = await utilisateurModel.trouverParEmail(email);
-  if (existant) return { success: false, error: 'EMAIL_DEJA_UTILISE' };
+function reponseSession(user, seSouvenir = false) {
+  return {
+    token: creerJeton(user.id_utilisateur, user.role, seSouvenir),
+    utilisateur: { id: user.id_utilisateur, nom: user.nom, prenom: user.prenom, role: user.role },
+  };
+}
 
+// Génère un code de vérification à 6 chiffres (stocké haché, valable 15 minutes) et l'envoie par e-mail.
+// Un échec d'envoi n'arrête pas l'inscription : le client peut demander un nouveau code.
+async function envoyerNouveauCodeVerification(id, email, prenom) {
+  const code = String(crypto.randomInt(0, 1000000)).padStart(6, '0');
+  await utilisateurModel.enregistrerCodeVerification(id, await bcrypt.hash(code, 10));
+  try {
+    await envoyerCodeVerification(email, prenom, code);
+  } catch (erreurMail) {
+    console.error('Envoi du code de vérification impossible :', erreurMail.message);
+  }
+}
+
+// BF01 : crée un compte client (non vérifié) et envoie le code de vérification par e-mail.
+// Aucun jeton n'est donné tant que l'adresse n'est pas vérifiée.
+async function inscrire({ nom, prenom, email, telephone, mot_de_passe }) {
   // RG03 : le mot de passe est haché, jamais stocké en clair
   const motDePasseHache = await bcrypt.hash(mot_de_passe, 10);
+
+  const existant = await utilisateurModel.trouverParEmail(email);
   let id;
-  try {
-    id = await utilisateurModel.creer({ nom, prenom, email, telephone, motDePasseHache });
-  } catch (e) {
-    // Deux inscriptions simultanées avec le même e-mail : la base refuse la seconde
-    if (e.code === 'ER_DUP_ENTRY') return { success: false, error: 'EMAIL_DEJA_UTILISE' };
-    throw e;
+  if (existant) {
+    if (existant.email_verifie) return { success: false, error: 'EMAIL_DEJA_UTILISE' };
+    // Compte jamais vérifié (inscription abandonnée, ou adresse saisie par quelqu'un d'autre) :
+    // on reprend l'inscription avec les nouvelles informations
+    id = existant.id_utilisateur;
+    await utilisateurModel.remplacerNonVerifie(id, { nom, prenom, telephone, motDePasseHache });
+  } else {
+    try {
+      id = await utilisateurModel.creer({ nom, prenom, email, telephone, motDePasseHache });
+    } catch (e) {
+      // Deux inscriptions simultanées avec le même e-mail : la base refuse la seconde
+      if (e.code === 'ER_DUP_ENTRY') return { success: false, error: 'EMAIL_DEJA_UTILISE' };
+      throw e;
+    }
   }
-  return {
-    success: true,
-    data: { token: creerJeton(id, 'client'), utilisateur: { id, nom, prenom, role: 'client' } },
-  };
+
+  await envoyerNouveauCodeVerification(id, email, prenom);
+  return { success: true, data: { email } };
+}
+
+// Vérifie le code reçu par e-mail : le compte est activé et le client est connecté
+async function verifierEmail({ email, code }) {
+  const user = await utilisateurModel.trouverParEmail(email);
+
+  // Même résultat dans tous les cas d'échec (e-mail inconnu, déjà vérifié, code faux, code expiré)
+  const echec = { success: false, error: 'CODE_INVALIDE' };
+  if (!user || user.email_verifie || !user.code_verification || !user.expiration_verification) return echec;
+  if (!(await utilisateurModel.dateEstFuture(user.expiration_verification))) return echec;
+  if (!(await bcrypt.compare(code, user.code_verification))) return echec;
+
+  await utilisateurModel.marquerEmailVerifie(user.id_utilisateur);
+  return { success: true, data: reponseSession(user) };
+}
+
+// Renvoie un nouveau code. Le résultat est toujours le même : on ne révèle pas les adresses inscrites.
+async function renvoyerCodeVerification(email) {
+  const user = await utilisateurModel.trouverParEmail(email);
+  if (user && !user.email_verifie) await envoyerNouveauCodeVerification(user.id_utilisateur, email, user.prenom);
+  return { success: true };
 }
 
 // BF02 : vérifie les identifiants et renvoie un jeton
@@ -42,13 +89,13 @@ async function connecter({ email, mot_de_passe, se_souvenir }) {
   const ok = user && (await bcrypt.compare(mot_de_passe, user.mot_de_passe));
   if (!ok) return { success: false, error: 'IDENTIFIANTS_INCORRECTS' };
 
-  return {
-    success: true,
-    data: {
-      token: creerJeton(user.id_utilisateur, user.role, se_souvenir === true),
-      utilisateur: { id: user.id_utilisateur, nom: user.nom, prenom: user.prenom, role: user.role },
-    },
-  };
+  // Bon mot de passe mais adresse jamais vérifiée : un nouveau code part par e-mail
+  if (!user.email_verifie) {
+    await envoyerNouveauCodeVerification(user.id_utilisateur, email, user.prenom);
+    return { success: false, error: 'EMAIL_NON_VERIFIE' };
+  }
+
+  return { success: true, data: reponseSession(user, se_souvenir === true) };
 }
 
 // BF04, RG05 : génère un code à 6 chiffres et l'envoie par e-mail.
@@ -84,4 +131,7 @@ async function reinitialiserMotDePasse({ email, code, nouveau_mot_de_passe }) {
   return { success: true };
 }
 
-module.exports = { inscrire, connecter, demanderCodeReinitialisation, reinitialiserMotDePasse };
+module.exports = {
+  inscrire, verifierEmail, renvoyerCodeVerification, connecter,
+  demanderCodeReinitialisation, reinitialiserMotDePasse,
+};

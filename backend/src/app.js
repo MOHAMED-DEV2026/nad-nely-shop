@@ -26,6 +26,8 @@ const limiteConnexion = rateLimit({ windowMs: 15 * 60 * 1000, max: 5, skipSucces
 
 app.get('/api/sante', (req, res) => res.json({ ok: true }));
 app.use('/api/auth/connexion', limiteConnexion);
+// Même limite pour les codes de vérification : empêche de deviner un code à 6 chiffres par essais
+app.use('/api/auth/verifier-email', limiteConnexion);
 app.use('/api/auth', limiteAuth, require('./routes/auth.routes'));
 app.use('/api', require('./routes/catalogue.routes'));
 app.use('/api/commandes', require('./routes/commande.routes'));

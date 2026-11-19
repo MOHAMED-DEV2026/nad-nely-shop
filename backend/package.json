@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "creer-admin": "node scripts/creerAdmin.js"
+    "creer-admin": "node scripts/creerAdmin.js",
+    "tester-mail": "node scripts/testerMail.js"
   },
   "license": "ISC",
   "dependencies": {
