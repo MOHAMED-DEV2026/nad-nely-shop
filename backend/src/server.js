@@ -16,3 +16,8 @@ app.listen(port, (erreur) => {
   }
   console.log(`API NAD-NELY Shop sur http://localhost:${port}`);
 });
+
+
+app.get('/', (req, res) => {
+  res.send('API NAD-NELY Shop : OK');
+});
