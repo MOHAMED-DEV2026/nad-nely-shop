@@ -8,3 +8,4 @@ uploads/*
 
 backend/uploads/*
 !backend/uploads/.gitkeep
+.env.deploy
