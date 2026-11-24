@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const utilisateurModel = require('../models/utilisateur.model');
-const { envoyerCodeReinitialisation, envoyerCodeVerification } = require('../config/mailer');
+const notifications = require('./notification.service');
 
 // « seSouvenir » : connexion longue (30 jours par défaut) quand le client coche « Se souvenir de moi »
 function creerJeton(id, role, seSouvenir = false) {
@@ -22,15 +22,11 @@ function reponseSession(user, seSouvenir = false) {
 }
 
 // Génère un code de vérification à 6 chiffres (stocké haché, valable 15 minutes) et l'envoie par e-mail.
-// Un échec d'envoi n'arrête pas l'inscription : le client peut demander un nouveau code.
+// Un échec d'envoi n'arrête pas l'inscription (il est seulement journalisé) : le client peut demander un nouveau code.
 async function envoyerNouveauCodeVerification(id, email, prenom) {
   const code = String(crypto.randomInt(0, 1000000)).padStart(6, '0');
   await utilisateurModel.enregistrerCodeVerification(id, await bcrypt.hash(code, 10));
-  try {
-    await envoyerCodeVerification(email, prenom, code);
-  } catch (erreurMail) {
-    console.error('Envoi du code de vérification impossible :', erreurMail.message);
-  }
+  await notifications.codeVerification(email, prenom, code);
 }
 
 // BF01 : crée un compte client (non vérifié) et envoie le code de vérification par e-mail.
@@ -72,6 +68,7 @@ async function verifierEmail({ email, code }) {
   if (!(await bcrypt.compare(code, user.code_verification))) return echec;
 
   await utilisateurModel.marquerEmailVerifie(user.id_utilisateur);
+  notifications.bienvenue(email, user.prenom); // sans attendre l'envoi : le client est connecté tout de suite
   return { success: true, data: reponseSession(user) };
 }
 
@@ -108,11 +105,7 @@ async function demanderCodeReinitialisation(email) {
   const code = String(crypto.randomInt(0, 1000000)).padStart(6, '0');
   await utilisateurModel.enregistrerCode(user.id_utilisateur, await bcrypt.hash(code, 10));
 
-  try {
-    await envoyerCodeReinitialisation(email, user.prenom, code);
-  } catch (erreurMail) {
-    console.error('Envoi du code impossible :', erreurMail.message);
-  }
+  await notifications.codeReinitialisation(email, user.prenom, code);
   return { success: true };
 }
 
@@ -128,6 +121,7 @@ async function reinitialiserMotDePasse({ email, code, nouveau_mot_de_passe }) {
 
   // Le code ne sert qu'une fois (RG05) : on l'efface en même temps que le mot de passe est changé (RG03)
   await utilisateurModel.reinitialiserMotDePasse(user.id_utilisateur, await bcrypt.hash(nouveau_mot_de_passe, 10));
+  notifications.motDePasseModifie(email, user.prenom); // alerte de sécurité, sans attendre l'envoi
   return { success: true };
 }
 

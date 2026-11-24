@@ -118,7 +118,27 @@ async function chercherClients(recherche, page, parPage) {
   return { total, clients };
 }
 
+// Administration : un compte avec son rôle et son nombre de commandes, ou null
+async function trouverAvecNbCommandes(id) {
+  const [rows] = await db.query(
+    `SELECT u.id_utilisateur, u.role, COUNT(c.id_commande) AS nb_commandes
+     FROM utilisateur u
+     LEFT JOIN commande c ON c.id_utilisateur = u.id_utilisateur
+     WHERE u.id_utilisateur = ?
+     GROUP BY u.id_utilisateur`,
+    [id]
+  );
+  return rows[0] ?? null;
+}
+
+// Supprime un compte client (jamais un administrateur). Renvoie le nombre de lignes supprimées.
+async function supprimerClient(id) {
+  const [r] = await db.query("DELETE FROM utilisateur WHERE id_utilisateur = ? AND role = 'client'", [id]);
+  return r.affectedRows;
+}
+
 module.exports = {
+  trouverAvecNbCommandes, supprimerClient,
   chercherClients, trouverParEmail, trouverProfilParId, trouverMotDePasseParId, creer,
   modifierProfil, modifierMotDePasse, enregistrerCode, dateEstFuture, reinitialiserMotDePasse,
   remplacerNonVerifie, enregistrerCodeVerification, marquerEmailVerifie,

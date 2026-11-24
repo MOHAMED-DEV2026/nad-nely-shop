@@ -31,8 +31,9 @@ router.get('/commandes', commandes.lister);
 router.get('/commandes/:id', validateId, commandes.obtenir);
 router.patch('/commandes/:id/statut', validateId, validerAction, commandes.changerStatut);
 
-// Clients inscrits, en consultation seule (BF24)
+// Clients inscrits (BF24) ; suppression seulement pour un client sans commande
 router.get('/utilisateurs', utilisateurs.lister);
+router.delete('/utilisateurs/:id', validateId, utilisateurs.supprimer);
 
 // Tableau de bord (BF25)
 router.get('/tableau-de-bord', tableauDeBord.indicateurs);

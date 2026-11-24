@@ -25,6 +25,7 @@ import MesCommandesView from "../views/public/MesCommandesView.vue";
 import CommandeDetailView from "../views/public/CommandeDetailView.vue";
 import PaiementSuccesView from "../views/public/PaiementSuccesView.vue";
 import PaiementAnnuleView from "../views/public/PaiementAnnuleView.vue";
+import ContactView from "../views/public/ContactView.vue";
 
 const routes = [
   { path: "/", component: AccueilView },
@@ -37,6 +38,7 @@ const routes = [
   { path: "/verification", component: VerificationEmailView },
   { path: "/mentions-legales", component: MentionsLegalesView },
   { path: "/confidentialite", component: ConfidentialiteView },
+  { path: "/contact", component: ContactView },
   { path: "/:pathMatch(.*)*", component: IntrouvableView },
   { path: "/admin", component: AdminLayout, meta: { exigeAdmin: true }, children: [{ path: "", component: AdminTableauView }, { path: "produits", component: AdminProduitsView },
       { path: "produits/nouveau", component: AdminProduitForm },

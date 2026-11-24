@@ -16,12 +16,14 @@ async function enregistrerReference(idCommande, reference) {
 }
 
 // Paiement arrivé après l'annulation de la commande par l'administrateur : on garde la trace
-// pour pouvoir rembourser le client (sans toucher à un paiement déjà validé)
+// pour pouvoir rembourser le client (sans toucher à un paiement déjà validé).
+// Renvoie true si le paiement vient d'être enregistré, false s'il l'était déjà.
 async function marquerValideTardif(cx, idCommande, reference) {
-  await cx.query(
+  const [r] = await cx.query(
     "UPDATE paiement SET statut = 'valide', date_paiement = NOW(), reference_transaction = ? WHERE id_commande = ? AND statut <> 'valide'",
     [reference, idCommande]
   );
+  return r.affectedRows > 0;
 }
 
 module.exports = { marquerValide, enregistrerReference, marquerValideTardif };

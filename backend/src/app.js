@@ -34,6 +34,12 @@ app.use('/api/commandes', require('./routes/commande.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));
 app.use('/api/paiements', require('./routes/paiement.routes'));
 app.use('/api/compte', require('./routes/compte.routes'));
+// Formulaire de contact : 5 messages par heure et par adresse IP (évite que la boîte de la boutique soit inondée)
+const limiteContact = rateLimit({
+  windowMs: 60 * 60 * 1000, max: 5,
+  message: { message: 'Vous avez envoyé beaucoup de messages, réessayez dans une heure' },
+});
+app.use('/api/contact', limiteContact, require('./routes/contact.routes'));
 
 // Images des produits (fichiers du dossier uploads)
 // Servies sous /api/uploads : en production (alwaysdata) seul le chemin /api est envoyé au backend

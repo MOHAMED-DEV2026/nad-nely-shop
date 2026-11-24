@@ -9,3 +9,8 @@ uploads/*
 backend/uploads/*
 !backend/uploads/.gitkeep
 .env.deploy
+apercu-emails/
+
+# Notes personnelles et fichiers de travail (restent sur le PC, pas sur GitHub)
+A-FAIRE.md
+img,jpg.png

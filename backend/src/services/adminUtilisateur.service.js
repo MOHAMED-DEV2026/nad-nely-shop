@@ -1,4 +1,4 @@
-// Service « utilisateurs » de l'administration : liste des clients, en consultation seule (BF24).
+// Service « utilisateurs » de l'administration : liste des clients (BF24) et suppression d'un client sans commande.
 const utilisateurModel = require('../models/utilisateur.model');
 
 const PAR_PAGE = 20;
@@ -19,4 +19,21 @@ async function lister(query) {
   };
 }
 
-module.exports = { lister };
+// Un client ne peut être supprimé que s'il n'a passé aucune commande :
+// ses commandes et paiements doivent rester dans l'historique. Un administrateur n'est jamais supprimé ici.
+async function supprimer(id) {
+  const compte = await utilisateurModel.trouverAvecNbCommandes(id);
+  if (!compte || compte.role !== 'client') return { success: false, error: 'CLIENT_INTROUVABLE' };
+  if (Number(compte.nb_commandes) > 0) return { success: false, error: 'CLIENT_AVEC_COMMANDES' };
+  try {
+    const nb = await utilisateurModel.supprimerClient(id);
+    if (nb === 0) return { success: false, error: 'CLIENT_INTROUVABLE' };
+  } catch (e) {
+    // Une commande a pu être créée entre la vérification et la suppression : la clé étrangère bloque
+    if (e.code === 'ER_ROW_IS_REFERENCED_2') return { success: false, error: 'CLIENT_AVEC_COMMANDES' };
+    throw e;
+  }
+  return { success: true };
+}
+
+module.exports = { lister, supprimer };

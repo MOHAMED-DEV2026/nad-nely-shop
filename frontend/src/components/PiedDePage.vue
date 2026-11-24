@@ -13,11 +13,12 @@
       </div>
       <div class="pied-bloc">
         <p class="pied-titre">Informations</p>
+        <RouterLink to="/contact">Nous contacter</RouterLink>
         <RouterLink to="/mentions-legales">Mentions légales</RouterLink>
         <RouterLink to="/confidentialite">Politique de confidentialité</RouterLink>
       </div>
     </div>
-    <div class="pied-bas">© 2026 NAD-NELY Shop · Projet DWWM</div>
+    <div class="pied-bas">© 2026 NAD-NELY Shop</div>
   </footer>
 </template>
 

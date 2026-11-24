@@ -95,7 +95,7 @@ async function verrouillerStatut(cx, id) {
 // Verrouille les produits d'une commande, avec leur stock actuel (RG39)
 async function verrouillerLignesAvecStock(cx, idCommande) {
   const [rows] = await cx.query(
-    `SELECT lc.id_produit, lc.quantite, p.stock
+    `SELECT lc.id_produit, lc.quantite, p.stock, p.nom
        FROM ligne_commande lc JOIN produit p ON p.id_produit = lc.id_produit
       WHERE lc.id_commande = ? FOR UPDATE`,
     [idCommande]

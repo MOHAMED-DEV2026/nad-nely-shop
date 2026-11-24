@@ -4,6 +4,7 @@ const adminModel = require('../models/adminCommande.model');
 const commandeModel = require('../models/commande.model');
 const { enTransaction } = require('../models/transaction');
 const { LIBELLES, statutAffiche } = require('../utils/statuts');
+const notifications = require('./notification.service');
 
 const PAR_PAGE = 20;
 // RG31 : étape suivante possible pour chaque statut (« livrée » et « annulée » sont définitifs, RG30)
@@ -54,8 +55,15 @@ async function obtenir(id) {
   };
 }
 
-// BF23 : faire avancer ou annuler une commande, dans une transaction
+// BF23 : faire avancer ou annuler une commande, dans une transaction.
+// Le client est prévenu par e-mail une fois le changement enregistré (sans attendre l'envoi).
 async function changerStatut(id, action) {
+  const resultat = await modifierStatut(id, action);
+  if (resultat.success) notifications.statutCommande(id);
+  return resultat;
+}
+
+async function modifierStatut(id, action) {
   return enTransaction(async (cx) => {
     const statut = await commandeModel.verrouillerStatut(cx, id);
     if (!statut) return { success: false, error: 'COMMANDE_INTROUVABLE' };

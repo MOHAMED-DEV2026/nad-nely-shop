@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 
 // Serveur d'envoi des e-mails :
-// - en production : le SMTP de l'hébergeur (variables SMTP_*), les clients reçoivent vraiment les messages ;
+// - en production : le SMTP réel (variables SMTP_*, par exemple Gmail), les clients reçoivent vraiment les messages ;
 // - en développement : la boîte de test Mailtrap (variables MAILTRAP_*), aucun vrai client ne les reçoit.
 const smtp = process.env.SMTP_HOST
   ? {
@@ -18,35 +18,20 @@ const smtp = process.env.SMTP_HOST
 const transport = nodemailer.createTransport(smtp);
 const EXPEDITEUR = process.env.SMTP_FROM || '"NAD-NELY Shop" <no-reply@nadnely-shop.test>';
 
-// Envoie le code de réinitialisation du mot de passe (BF04)
-async function envoyerCodeReinitialisation(destinataire, prenom, code) {
+// Adresse de la boutique : reçoit les alertes (nouvelle commande, stock bas...) et les messages du formulaire de contact
+const EMAIL_ADMIN = process.env.ADMIN_EMAIL || process.env.SMTP_USER || 'admin@nadnely-shop.test';
+
+// Envoie un message construit par emails/messages.js ({ sujet, html, texte }).
+// « repondreA » : adresse utilisée quand on clique sur « Répondre » (formulaire de contact).
+async function envoyer(destinataire, message, repondreA) {
   await transport.sendMail({
     from: EXPEDITEUR,
     to: destinataire,
-    subject: 'Votre code de réinitialisation – NAD-NELY Shop',
-    text:
-      `Bonjour ${prenom},\n\n` +
-      `Voici votre code de réinitialisation : ${code}\n` +
-      `Il est valable 15 minutes et ne peut servir qu'une seule fois.\n\n` +
-      `Si vous n'êtes pas à l'origine de cette demande, ignorez ce message.\n\n` +
-      `NAD-NELY Shop`,
+    replyTo: repondreA,
+    subject: message.sujet,
+    text: message.texte,
+    html: message.html,
   });
 }
 
-// Envoie le code de vérification de l'adresse e-mail (inscription)
-async function envoyerCodeVerification(destinataire, prenom, code) {
-  await transport.sendMail({
-    from: EXPEDITEUR,
-    to: destinataire,
-    subject: 'Confirmez votre adresse e-mail – NAD-NELY Shop',
-    text:
-      `Bonjour ${prenom},\n\n` +
-      `Bienvenue sur NAD-NELY Shop ! Pour activer votre compte, saisissez ce code :\n\n` +
-      `${code}\n\n` +
-      `Il est valable 15 minutes et ne peut servir qu'une seule fois.\n\n` +
-      `Si vous n'avez pas créé de compte, ignorez ce message.\n\n` +
-      `NAD-NELY Shop`,
-  });
-}
-
-module.exports = { envoyerCodeReinitialisation, envoyerCodeVerification };
+module.exports = { envoyer, EMAIL_ADMIN };

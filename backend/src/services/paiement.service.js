@@ -6,15 +6,23 @@ const commandeModel = require('../models/commande.model');
 const paiementModel = require('../models/paiement.model');
 const produitModel = require('../models/produit.model');
 const { enTransaction } = require('../models/transaction');
+const notifications = require('./notification.service');
 
 // Confirme la commande dans une transaction qui verrouille la commande et les produits
 async function confirmerCommande(idCommande, referenceStripe) {
+  // E-mail à envoyer une fois la transaction validée (jamais avant : elle pourrait encore être annulée)
+  let emailAEnvoyer = null;
+
   const resultat = await enTransaction(async (cx) => {
     // Si la page est rechargée, on ne confirme pas deux fois (stock décrémenté une seule fois)
     const statut = await commandeModel.verrouillerStatut(cx, idCommande);
     if (statut !== 'en_attente') {
       // Commande annulée par l'administrateur pendant le paiement : la trace du paiement est gardée (remboursement manuel)
-      if (statut === 'annulee') await paiementModel.marquerValideTardif(cx, idCommande, referenceStripe);
+      if (statut === 'annulee') {
+        const enregistre = await paiementModel.marquerValideTardif(cx, idCommande, referenceStripe);
+        // L'alerte « remboursement » ne part qu'une fois, même si le client recharge la page
+        if (enregistre) emailAEnvoyer = () => notifications.paiementSurCommandeAnnulee(idCommande, referenceStripe);
+      }
       return { success: true, data: { id_commande: idCommande, statut } };
     }
 
@@ -29,14 +37,20 @@ async function confirmerCommande(idCommande, referenceStripe) {
       // RG39 : stock devenu insuffisant, la commande est annulée, remboursement manuel depuis Stripe.
       // On valide quand même la transaction, pour garder la trace du paiement et de l'annulation.
       await commandeModel.changerStatut(cx, idCommande, 'annulee');
+      emailAEnvoyer = () => notifications.commandeAnnuleeStock(idCommande, referenceStripe);
       return { success: true, data: { id_commande: idCommande, statut: 'annulee', stockInsuffisant: true } };
     }
 
     // RG38 : le stock est décrémenté au moment de la confirmation
     for (const l of lignes) await produitModel.decrementerStock(cx, l.id_produit, l.quantite);
     await commandeModel.changerStatut(cx, idCommande, 'confirmee');
+    const stocksRestants = lignes.map((l) => ({ nom: l.nom, stock: l.stock - l.quantite }));
+    emailAEnvoyer = () => notifications.commandePayee(idCommande, stocksRestants);
     return { success: true, data: { id_commande: idCommande, statut: 'confirmee', message: 'Paiement confirmé' } };
   });
+
+  // Sans attendre l'envoi : le client voit tout de suite la page « paiement réussi »
+  if (emailAEnvoyer) emailAEnvoyer();
 
   if (resultat.data.stockInsuffisant) {
     return { success: false, error: 'STOCK_DEVENU_INSUFFISANT', data: { id_commande: idCommande, statut: 'annulee' } };
